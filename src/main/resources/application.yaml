@@ -8,3 +8,4 @@ spring:
     locations: classpath:db/migration
   application:
     name: ChordsAndTabs
+
