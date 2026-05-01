@@ -20,11 +20,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final JwtUtil jwtUtil;
     private final JwtAuthenticationFilter jwtFilter;
 
     public SecurityConfig(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
         this.jwtFilter = new JwtAuthenticationFilter(jwtUtil);
     }
 
