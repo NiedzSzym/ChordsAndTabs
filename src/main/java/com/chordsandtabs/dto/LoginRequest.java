@@ -1,13 +1,10 @@
 package com.chordsandtabs.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 
-@Data
-public class LoginRequest {
+public record LoginRequest(
     @NotBlank
-    private String email;
-
+    String email,
     @NotBlank
-    private char[] password;
-}
+    char[] password
+) {}
