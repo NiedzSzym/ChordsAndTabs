@@ -1,6 +1,6 @@
 CREATE TABLE "instrument_type" (
   "instrument_type_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" varchar(30) NOT NULL,
+  "name" varchar(30) UNIQUE NOT NULL,
   "string_count" integer NOT NULL
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE "song" (
 );
 CREATE TABLE "artist" (
   "artist_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" VARCHAR(100) NOT NULL
+  "name" VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE "artist_song" (
@@ -118,4 +118,12 @@ INSERT INTO role (name)
 VALUES
     ('ROLE_USER'),
     ('ROLE_ADMIN')
-ON CONFLICT (name) DO NOTHING
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO "instrument_type" ("name", "string_count") VALUES
+    ('Gitara klasyczna', 6),
+    ('Gitara akustyczna', 6),
+    ('Gitara elektryczna', 6),
+    ('Gitara basowa', 4),
+    ('Ukulele', 4)
+ON CONFLICT ("name") DO NOTHING;
