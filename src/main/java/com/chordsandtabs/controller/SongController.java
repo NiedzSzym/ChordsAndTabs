@@ -1,13 +1,18 @@
 package com.chordsandtabs.controller;
 
 
+import com.chordsandtabs.dto.song.SongCreateRequest;
 import com.chordsandtabs.dto.song.SongsListDto;
 import com.chordsandtabs.model.Artist;
+import com.chordsandtabs.model.Song;
+import com.chordsandtabs.repository.ArtistRepository;
 import com.chordsandtabs.repository.SongRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -16,9 +21,11 @@ import java.util.List;
 public class SongController {
 
     private final SongRepository songRepository;
+    private final ArtistRepository artistRepository;
 
-    public SongController(SongRepository songRepository) {
+    public SongController(SongRepository songRepository, ArtistRepository artistRepository) {
         this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
     }
 
     @GetMapping
@@ -32,5 +39,19 @@ public class SongController {
                                 .toList()
                 ))
                 .toList();
+    }
+
+    @PostMapping
+    @RequestMapping("/create")
+    public ResponseEntity<Void> create(@RequestBody @Valid SongCreateRequest req) {
+        Song song = new Song();
+        song.setName(req.name());
+        song.setReleaseYear(req.releaseYear());
+
+        List<Artist> artists = (List<Artist>) artistRepository.findAllById(req.artistIds());
+        song.setArtists(new HashSet<>(artists));
+
+        songRepository.save(song);
+        return ResponseEntity.created(URI.create("/api/songs/create/" + song.getSong_id())).build();
     }
 }
