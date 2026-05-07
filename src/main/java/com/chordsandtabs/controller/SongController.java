@@ -9,13 +9,16 @@ import com.chordsandtabs.repository.ArtistRepository;
 import com.chordsandtabs.repository.SongRepository;
 import com.chordsandtabs.specification.SongSpecification;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -31,7 +34,8 @@ public class SongController {
     }
 
     @GetMapping
-    public List<SongDto> getAll(
+    public Page<SongDto> getAll(
+            @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String name
@@ -42,29 +46,70 @@ public class SongController {
         if (year != null) spec = spec.and(SongSpecification.hasYear(year));
         if (name != null) spec = spec.and(SongSpecification.hasNameLike(name));
 
-        List<Song> songs = songRepository.findAll(spec);
+        Page<Song> page = songRepository.findAll(
+                spec, pageable
+        );
 
-        return songs.stream().map(this::toDto).toList();
+        return page.map(this::toDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SongDto> getSong(
+            @PathVariable Long id
+    ) {
+        return songRepository.findByIdWithArtists(id)
+                .map(this::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
     @PostMapping
-    @RequestMapping("/create")
-    public ResponseEntity<Void> create(@RequestBody @Valid SongCreateRequest req) {
+    public ResponseEntity<Void> createSong(@RequestBody @Valid SongCreateRequest req) {
         Song song = new Song();
         song.setName(req.name());
         song.setReleaseYear(req.releaseYear());
 
-        List<Artist> artists = (List<Artist>) artistRepository.findAllById(req.artistIds());
-        song.setArtists(new HashSet<>(artists));
+        if (req.artistIds() != null) {
+            var artists = artistRepository.findAllById(req.artistIds());
+            HashSet<Artist> artistsSet = new HashSet<>();
+            artists.forEach(artistsSet::add);
+            song.setArtists(artistsSet);
+        }
+
 
         songRepository.save(song);
-        return ResponseEntity.created(URI.create("/api/songs/create/" + song.getSong_id())).build();
+        return ResponseEntity.created(URI.create("/api/songs/" + song.getSong_id())).build();
     }
 
-    @DeleteMapping
-    @RequestMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id ) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateSong(@PathVariable Long id,@RequestBody @Valid SongCreateRequest req) {
+        Optional<Song> existing = songRepository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Song song = existing.get();
+        if (req.name() != null) {
+            song.setName(req.name());
+        }
+        if (req.releaseYear() != null) {
+            song.setReleaseYear(req.releaseYear());
+        }
+
+        if (req.artistIds() != null) {
+            var artists = artistRepository.findAllById(req.artistIds());
+            HashSet<Artist> artistSet = new HashSet<>();
+            artists.forEach(artistSet::add);
+            song.setArtists(artistSet);
+        }
+
+        songRepository.save(song);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSong(@PathVariable Long id ) {
         songRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
