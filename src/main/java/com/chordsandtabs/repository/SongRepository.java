@@ -16,6 +16,6 @@ public interface SongRepository extends CrudRepository<Song, Long>, JpaSpecifica
     @NonNull
     Page<Song> findAll(@NonNull Specification<Song> spec, @NonNull Pageable pageable);
 
-    @Query("SELECT s FROM Song s LEFT JOIN FETCH s.artists WHERE s.song_id = :id")
+    @Query("SELECT s FROM Song s LEFT JOIN FETCH s.artists WHERE s.songId = :id")
     Optional<Song> findByIdWithArtists(@Param("id") Long id);
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long song_id;
+    Long songId;
 
     String name;
 

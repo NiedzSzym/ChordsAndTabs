@@ -79,7 +79,7 @@ public class SongController {
 
 
         songRepository.save(song);
-        return ResponseEntity.created(URI.create("/api/songs/" + song.getSong_id())).build();
+        return ResponseEntity.created(URI.create("/api/songs/" + song.getSongId())).build();
     }
 
     @PutMapping("/{id}")
@@ -116,7 +116,7 @@ public class SongController {
 
     private SongDto toDto(Song song) {
         return new SongDto(
-                song.getSong_id(),
+                song.getSongId(),
                 song.getName(),
                 song.getReleaseYear(),
                 song.getArtists().stream()
