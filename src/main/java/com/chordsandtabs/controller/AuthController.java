@@ -48,11 +48,11 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         Account account = new Account();
 
-        account.setEmail(request.getEmail());
+        account.setEmail(request.email());
 
-        String rawPassword = String.valueOf(request.getPassword());
+        String rawPassword = String.valueOf(request.password());
         String hashedPassword = passwordEncoder.encode(rawPassword);
-        Arrays.fill(request.getPassword(), '\0');
+        Arrays.fill(request.password(), '\0');
         Objects.requireNonNull(hashedPassword, "Encoder returned null");
         account.setPassword(hashedPassword.toCharArray());
 
@@ -68,9 +68,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), String.valueOf(request.getPassword()))
+                new UsernamePasswordAuthenticationToken(request.email(), String.valueOf(request.password()))
         );
-        Account account = accountRepository.findAccountByEmail(request.getEmail()).orElseThrow();
+        Account account = accountRepository.findAccountByEmail(request.email()).orElseThrow();
         String token = jwtUtil.generateToken(account.getEmail(), account.getRole().getName());
         return ResponseEntity.ok(new AuthResponse(token));
     }

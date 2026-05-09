@@ -3,15 +3,12 @@ package com.chordsandtabs.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
-@Data
-public class RegisterRequest {
+public record RegisterRequest(
     @NotBlank(message = "Email can't be empty")
     @Email(message = "Wrong format of Email")
-    private String email;
-
+    String email,
     @NotBlank
     @Size(min =8, max = 50, message = "Password must contain at least 8 characters")
-    private char[] password;
-}
+    char[] password
+) {}
