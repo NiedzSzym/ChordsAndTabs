@@ -24,4 +24,8 @@ public class Song {
             inverseJoinColumns = @JoinColumn(name = "artist_id")
     )
     Set<Artist> artists = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private Account createdBy;
 }

@@ -21,4 +21,8 @@ public class Artist {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     Set<Song> Songs = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private Account createdBy;
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/artists")
+@RequestMapping("/api/artists")
 public class ArtistController {
     private final ArtistRepository artistRepository;
 

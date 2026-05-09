@@ -3,13 +3,13 @@
 
 -- ─── Keys (major/minor) ──────────────────────────────────────────────
 INSERT INTO "key" ("name", "mode") VALUES
-  ('C', 'major'),   ('C', 'minor'),
-  ('D', 'major'),   ('D', 'minor'),
-  ('E', 'major'),   ('E', 'minor'),
-  ('F', 'major'),   ('F', 'minor'),
-  ('G', 'major'),   ('G', 'minor'),
-  ('A', 'major'),   ('A', 'minor'),
-  ('B', 'major'),   ('B', 'minor')
+  ('C', 'MAJOR'),   ('C', 'MINOR'),
+  ('D', 'MAJOR'),   ('D', 'MINOR'),
+  ('E', 'MAJOR'),   ('E', 'MINOR'),
+  ('F', 'MAJOR'),   ('F', 'MINOR'),
+  ('G', 'MAJOR'),   ('G', 'MINOR'),
+  ('A', 'MAJOR'),   ('A', 'MINOR'),
+  ('B', 'MAJOR'),   ('B', 'MINOR')
 ON CONFLICT DO NOTHING;
 
 -- ─── Tunings (by instrument) ────────────────────────────────────────
@@ -354,8 +354,8 @@ INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "k
 SELECT
   s.song_id,
   (SELECT account_id FROM "account" WHERE email = 'jan@test.pl' LIMIT 1),
-  'public',
-  'chords',
+  'PUBLIC',
+  'CHORDS',
   k.key_id,
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id =
     (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
@@ -366,7 +366,7 @@ SELECT
   NULL,
   NULL
 FROM "song" s
-JOIN "key" k ON k.name = 'G' AND k.mode = 'major'
+JOIN "key" k ON k.name = 'G' AND k.mode = 'MAJOR'
 WHERE s.name IN (
   'Wonderwall', 'Knockin'' on Heaven''s Door', 'Good Riddance',
   'Basket Case', 'Yellow', 'Buddy Holly', 'Santeria',
@@ -379,8 +379,8 @@ INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "k
 SELECT
   s.song_id,
   (SELECT account_id FROM "account" WHERE email = 'anna@test.pl' LIMIT 1),
-  'public',
-  'chords',
+  'PUBLIC',
+  'CHORDS',
   k.key_id,
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id =
     (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
@@ -391,6 +391,6 @@ SELECT
   NULL,
   NULL
 FROM "song" s
-JOIN "key" k ON k.name = 'E' AND k.mode = 'minor'
+JOIN "key" k ON k.name = 'E' AND k.mode = 'MINOR'
 WHERE s.name IN ('Smells Like Teen Spirit', 'Creep', 'Nothing Else Matters')
 ON CONFLICT DO NOTHING;

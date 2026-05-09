@@ -4,7 +4,7 @@ CREATE TABLE "instrument_type" (
   "string_count" integer NOT NULL
 );
 
-CREATE TYPE key_mode_enum AS ENUM ('major', 'minor');
+CREATE TYPE key_mode_enum AS ENUM ('MAJOR', 'MINOR');
 
 CREATE TABLE "key" (
   "key_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -12,11 +12,6 @@ CREATE TABLE "key" (
   "mode" key_mode_enum NOT NULL
 );
 
-CREATE TABLE "tuning" (
-  "tuning_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "tuning" VARCHAR(12) NOT NULL ,
-  "instrument_type_id" INT REFERENCES "instrument_type" ("instrument_type_id")
-);
 
 CREATE TABLE "role" (
   "role_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -42,15 +37,23 @@ CREATE TABLE "account_profile" (
   "updated_at" TIMESTAMPTZ,
   FOREIGN KEY ("account_id") REFERENCES "account" ("account_id")
 );
+CREATE TABLE "tuning" (
+  "tuning_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "tuning" VARCHAR(12) NOT NULL ,
+  "instrument_type_id" INT REFERENCES "instrument_type" ("instrument_type_id"),
+  "created_by" BIGINT REFERENCES "account" ("account_id")
+);
 
 CREATE TABLE "song" (
   "song_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" VARCHAR(100) NOT NULL,
-  "release_year" INTEGER
+  "release_year" INTEGER,
+  "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 CREATE TABLE "artist" (
   "artist_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" VARCHAR(100) UNIQUE NOT NULL
+  "name" VARCHAR(100) UNIQUE NOT NULL,
+  "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 
 CREATE TABLE "artist_song" (
@@ -59,8 +62,8 @@ CREATE TABLE "artist_song" (
   PRIMARY KEY ("song_id", "artist_id")
 );
 
-CREATE TYPE notation_type_enum AS ENUM ('chords', 'tabs');
-CREATE TYPE status_enum AS ENUM ('public', 'private', 'archived');
+CREATE TYPE notation_type_enum AS ENUM ('CHORDS', 'TABS');
+CREATE TYPE status_enum AS ENUM ('PUBLIC', 'PRIVATE', 'ARCHIVED');
 
 CREATE TABLE "song_chords" (
   "song_chords_id" SERIAL PRIMARY KEY,
@@ -68,7 +71,7 @@ CREATE TABLE "song_chords" (
   "author_id" INT NOT NULL REFERENCES "account" ("account_id"),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ,
-  "status" status_enum NOT NULL DEFAULT 'private',
+  "status" status_enum NOT NULL DEFAULT 'PUBLIC',
   "notation_type" notation_type_enum,
   "key_id" INT REFERENCES "key" ("key_id"),
   "tuning_id" INT REFERENCES "tuning" ("tuning_id"),
@@ -86,7 +89,8 @@ CREATE TABLE "chord" (
   "name" VARCHAR(20) NOT NULL,
   "instrument_type_id" INT NOT NULL REFERENCES "instrument_type" ("instrument_type_id"),
   "tuning_id" INT NOT NULL REFERENCES "tuning" ("tuning_id"),
-  "chord_fingering" JSON NOT NULL
+  "chord_fingering" JSON NOT NULL,
+  "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 
 
