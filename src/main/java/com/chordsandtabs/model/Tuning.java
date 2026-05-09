@@ -16,4 +16,8 @@ public class Tuning {
     @JoinColumn(name = "instrument_type_id")
     private InstrumentType instrumentType;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private Account createdBy;
+
 }

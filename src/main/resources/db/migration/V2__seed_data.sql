@@ -67,7 +67,9 @@ FROM "account" a WHERE a.email = 'music@test.pl'
 ON CONFLICT DO NOTHING;
 
 -- ─── Artists ────────────────────────────────────────────────────────
-INSERT INTO "artist" ("name") VALUES
+INSERT INTO "artist" ("name", "created_by")
+SELECT v.name, (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
+FROM (VALUES
   ('Led Zeppelin'), ('Pink Floyd'), ('The Beatles'), ('The Rolling Stones'),
   ('Bob Dylan'), ('Jimi Hendrix'), ('Eric Clapton'), ('David Bowie'),
   ('Queen'), ('The Doors'), ('Nirvana'), ('Radiohead'),
@@ -92,11 +94,14 @@ INSERT INTO "artist" ("name") VALUES
   ('Travis'), ('Keane'), ('Snow Patrol'), ('Stereophonics'),
   ('Manic Street Preachers'), ('Ash'), ('Supergrass'), ('Ocean Colour Scene'),
   ('Dodgy'), ('Cast'), ('Shed Seven'), ('Kula Shaker')
+) AS v (name)
 ON CONFLICT (name) DO NOTHING;
 
 -- ─── Songs ──────────────────────────────────────────────────────────
 -- release_year = NULL for songs where year is not applicable
-INSERT INTO "song" ("name", "release_year") VALUES
+INSERT INTO "song" ("name", "release_year", "created_by")
+SELECT v.*, (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
+FROM (VALUES
   ('Stairway to Heaven', 1971), ('Hotel California', 1977), ('Bohemian Rhapsody', 1975),
   ('Comfortably Numb', 1979), ('Wonderwall', 1995), ('Smells Like Teen Spirit', 1991),
   ('Nothing Else Matters', 1991), ('Back in Black', 1980), ('Sweet Child O Mine', 1987),
@@ -139,7 +144,8 @@ INSERT INTO "song" ("name", "release_year") VALUES
   ('A Moon Shaped Pool', 2016), ('Decks Dark', 2016),
   ('Identikit', 2016), ('Ful Stop', 2016),
   ('Tinker Tailor', 2016), ('Glass Eyes', 2016),
-  ('Desert Island Disk', 2016)
+   ('Desert Island Disk', 2016)
+) AS v (name, release_year)
 ON CONFLICT DO NOTHING;
 
 -- ─── Artist-Song Mappings ──────────────────────────────────────────
@@ -257,100 +263,115 @@ ON CONFLICT DO NOTHING;
 
 -- ─── Chords (basic open chords) ─────────────────────────────────────
 -- Uses subqueries to resolve tuning_id and instrument_type_id by name
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'C',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,3,2,0,1,0],"fingers":[null,3,2,null,1,null],"barre":null}'
+  '{"frets":[null,3,2,0,1,0],"fingers":[null,3,2,null,1,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'D',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,3,2],"fingers":[null,null,null,1,3,2],"barre":null}'
+  '{"frets":[null,null,0,2,3,2],"fingers":[null,null,null,1,3,2],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'E',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,2,1,0,0],"fingers":[null,2,3,1,null,null],"barre":null}'
+  '{"frets":[0,2,2,1,0,0],"fingers":[null,2,3,1,null,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Em',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,2,0,0,0],"fingers":[null,2,3,null,null,null],"barre":null}'
+  '{"frets":[0,2,2,0,0,0],"fingers":[null,2,3,null,null,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'F',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[1,1,2,3,1,1],"fingers":[1,1,2,3,1,1],"barre":1}'
+  '{"frets":[1,1,2,3,1,1],"fingers":[1,1,2,3,1,1],"barre":1}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'G',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[3,2,0,0,0,3],"fingers":[2,1,null,null,null,3],"barre":null}'
+  '{"frets":[3,2,0,0,0,3],"fingers":[2,1,null,null,null,3],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'A',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,2,2,0],"fingers":[null,null,1,2,3,null],"barre":null}'
+  '{"frets":[null,0,2,2,2,0],"fingers":[null,null,1,2,3,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Am',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,2,1,0],"fingers":[null,null,2,3,1,null],"barre":null}'
+  '{"frets":[null,0,2,2,1,0],"fingers":[null,null,2,3,1,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Bm',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,2,4,4,3,2],"fingers":[null,1,3,4,2,1],"barre":2}'
+  '{"frets":[null,2,4,4,3,2],"fingers":[null,1,3,4,2,1],"barre":2}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Dm',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,3,1],"fingers":[null,null,null,2,3,1],"barre":null}'
+  '{"frets":[null,null,0,2,3,1],"fingers":[null,null,null,2,3,1],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'A7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,0,2,0],"fingers":[null,null,1,null,2,null],"barre":null}'
+  '{"frets":[null,0,2,0,2,0],"fingers":[null,null,1,null,2,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'D7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,1,2],"fingers":[null,null,null,2,1,3],"barre":null}'
+  '{"frets":[null,null,0,2,1,2],"fingers":[null,null,null,2,1,3],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'E7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,0,1,0,0],"fingers":[null,2,null,1,null,null],"barre":null}'
+  '{"frets":[0,2,0,1,0,0],"fingers":[null,2,null,1,null,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Fmaj7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,3,2,1,0],"fingers":[null,null,3,2,1,null],"barre":null}'
+  '{"frets":[null,null,3,2,1,0],"fingers":[null,null,3,2,1,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
-INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering")
+INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Cadd9',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,3,2,0,3,0],"fingers":[null,2,1,null,3,null],"barre":null}'
+  '{"frets":[null,3,2,0,3,0],"fingers":[null,2,1,null,3,null],"barre":null}',
+  (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 
 -- ─── Song Chords (sample tab entries) ───────────────────────────────
 -- These reference real songs, keys, tunings, instruments, and accounts
-INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body")
+INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body", "created_by")
 SELECT
   s.song_id,
   (SELECT account_id FROM "account" WHERE email = 'jan@test.pl' LIMIT 1),
@@ -364,7 +385,8 @@ SELECT
   '4/4',
   NULL,
   NULL,
-  NULL
+  NULL,
+  (SELECT account_id FROM "account" WHERE email = 'jan@test.pl' LIMIT 1)
 FROM "song" s
 JOIN "key" k ON k.name = 'G' AND k.mode = 'MAJOR'
 WHERE s.name IN (
@@ -375,7 +397,7 @@ WHERE s.name IN (
 ON CONFLICT DO NOTHING;
 
 -- Some minor key songs
-INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body")
+INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body", "created_by")
 SELECT
   s.song_id,
   (SELECT account_id FROM "account" WHERE email = 'anna@test.pl' LIMIT 1),
@@ -389,8 +411,117 @@ SELECT
   '4/4',
   NULL,
   NULL,
-  NULL
+  NULL,
+  (SELECT account_id FROM "account" WHERE email = 'anna@test.pl' LIMIT 1)
 FROM "song" s
 JOIN "key" k ON k.name = 'E' AND k.mode = 'MINOR'
 WHERE s.name IN ('Smells Like Teen Spirit', 'Creep', 'Nothing Else Matters')
+ON CONFLICT DO NOTHING;
+
+-- ─── Song-Chords ↔ Chord Mappings ──────────────────────────────────
+-- Links each song_chords entry to the chords used in that song
+-- Chords available: C, D, E, Em, F, G, A, Am, Bm, Dm, A7, D7, E7, Fmaj7, Cadd9
+-- Wonderwall: Em, G, D, A7, Cadd9
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('Em', 'G', 'D', 'A7', 'Cadd9')
+WHERE s.name = 'Wonderwall'
+ON CONFLICT DO NOTHING;
+-- Knockin' on Heaven's Door: G, D, Am, C
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('G', 'D', 'Am', 'C')
+WHERE s.name = 'Knockin'' on Heaven''s Door'
+ON CONFLICT DO NOTHING;
+-- Good Riddance: G, C, D, Em
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('G', 'C', 'D', 'Em')
+WHERE s.name = 'Good Riddance'
+ON CONFLICT DO NOTHING;
+-- Basket Case: E, A, Bm, G
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('E', 'A', 'Bm', 'G')
+WHERE s.name = 'Basket Case'
+ON CONFLICT DO NOTHING;
+-- Yellow: G, D, Em, C
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('G', 'D', 'Em', 'C')
+WHERE s.name = 'Yellow'
+ON CONFLICT DO NOTHING;
+-- Buddy Holly: A, D, E, G
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('A', 'D', 'E', 'G')
+WHERE s.name = 'Buddy Holly'
+ON CONFLICT DO NOTHING;
+-- Santeria: D, G, Em, A
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('D', 'G', 'Em', 'A')
+WHERE s.name = 'Santeria'
+ON CONFLICT DO NOTHING;
+-- Iris: D, Em, G, A
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('D', 'Em', 'G', 'A')
+WHERE s.name = 'Iris'
+ON CONFLICT DO NOTHING;
+-- Sex and Candy: D, A, Em, G
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('D', 'A', 'Em', 'G')
+WHERE s.name = 'Sex and Candy'
+ON CONFLICT DO NOTHING;
+-- Don't Look Back in Anger: C, G, Am, Em, D
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('C', 'G', 'Am', 'Em', 'D')
+WHERE s.name = 'Don''t Look Back in Anger'
+ON CONFLICT DO NOTHING;
+-- Smells Like Teen Spirit: Em, G, D, A (power chord style)
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('Em', 'G', 'D', 'A')
+WHERE s.name = 'Smells Like Teen Spirit'
+ON CONFLICT DO NOTHING;
+-- Creep: G, C, Em, D
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('G', 'C', 'Em', 'D')
+WHERE s.name = 'Creep'
+ON CONFLICT DO NOTHING;
+-- Nothing Else Matters: Em, C, D, G
+INSERT INTO "song_chords_chord" ("song_chords_id", "chord_id")
+SELECT sc.song_chords_id, c.chord_id
+FROM "song_chords" sc
+JOIN "song" s ON s.song_id = sc.song_id
+JOIN "chord" c ON c.name IN ('Em', 'C', 'D', 'G')
+WHERE s.name = 'Nothing Else Matters'
 ON CONFLICT DO NOTHING;

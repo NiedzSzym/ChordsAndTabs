@@ -25,8 +25,10 @@ public class SongChords {
 
     private OffsetDateTime updatedAt;
     
+    @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
     private NotationType notationType;
 
     @ManyToOne
@@ -58,5 +60,9 @@ public class SongChords {
             inverseJoinColumns = @JoinColumn(name = "chord_id")
     )
     private Set<Chord> chords = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private Account createdBy;
 
 }

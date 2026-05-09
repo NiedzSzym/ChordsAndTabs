@@ -80,7 +80,8 @@ CREATE TABLE "song_chords" (
   "time_signature" VARCHAR(10),
   "tempo" INT,
   "capo_fret" INT,
-  "song_body" TEXT
+  "song_body" TEXT,
+  "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 
 
@@ -93,6 +94,11 @@ CREATE TABLE "chord" (
   "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 
+CREATE TABLE "song_chords_chord" (
+  "song_chords_id" INT NOT NULL REFERENCES "song_chords" ("song_chords_id"),
+  "chord_id" INT NOT NULL REFERENCES "chord" ("chord_id"),
+  PRIMARY KEY ("song_chords_id", "chord_id")
+);
 
 ALTER TABLE "song_chords" ADD FOREIGN KEY ("song_id") REFERENCES "song" ("song_id") DEFERRABLE INITIALLY IMMEDIATE;
 

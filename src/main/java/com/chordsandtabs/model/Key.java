@@ -12,5 +12,6 @@ public class Key {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private Mode mode;
 }

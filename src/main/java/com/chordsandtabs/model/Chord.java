@@ -31,4 +31,8 @@ public class Chord {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     Set<SongChords> songChords = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private Account createdBy;
 }
