@@ -48,12 +48,14 @@ CREATE TABLE "song" (
   "song_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" VARCHAR(100) NOT NULL,
   "release_year" INTEGER,
-  "created_by" BIGINT REFERENCES "account" ("account_id")
+  "created_by" BIGINT REFERENCES "account" ("account_id"),
+  "deleted_at" TIMESTAMPTZ
 );
 CREATE TABLE "artist" (
   "artist_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" VARCHAR(100) UNIQUE NOT NULL,
-  "created_by" BIGINT REFERENCES "account" ("account_id")
+  "created_by" BIGINT REFERENCES "account" ("account_id"),
+  "deleted_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "artist_song" (
@@ -81,7 +83,8 @@ CREATE TABLE "song_chords" (
   "tempo" INT,
   "capo_fret" INT,
   "song_body" TEXT,
-  "created_by" BIGINT REFERENCES "account" ("account_id")
+  "created_by" BIGINT REFERENCES "account" ("account_id"),
+  "deleted_at" TIMESTAMPTZ
 );
 
 
@@ -91,7 +94,8 @@ CREATE TABLE "chord" (
   "instrument_type_id" INT NOT NULL REFERENCES "instrument_type" ("instrument_type_id"),
   "tuning_id" INT NOT NULL REFERENCES "tuning" ("tuning_id"),
   "chord_fingering" JSON NOT NULL,
-  "created_by" BIGINT REFERENCES "account" ("account_id")
+  "created_by" BIGINT REFERENCES "account" ("account_id"),
+  "deleted_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "song_chords_chord" (

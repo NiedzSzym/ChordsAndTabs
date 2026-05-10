@@ -3,10 +3,13 @@ package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.song.SongCreateRequest;
 import com.chordsandtabs.dto.song.SongDto;
+import com.chordsandtabs.model.Account;
 import com.chordsandtabs.model.Artist;
 import com.chordsandtabs.model.Song;
+import com.chordsandtabs.repository.AccountRepository;
 import com.chordsandtabs.repository.ArtistRepository;
 import com.chordsandtabs.repository.SongRepository;
+import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongSpecification;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -14,9 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -27,10 +33,14 @@ public class SongController {
 
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
+    private final CurrentUserService currentUserService;
 
-    public SongController(SongRepository songRepository, ArtistRepository artistRepository) {
+    public SongController(SongRepository songRepository,
+                          ArtistRepository artistRepository,
+                          AccountRepository accountRepository, CurrentUserService currentUserService) {
         this.songRepository = songRepository;
         this.artistRepository = artistRepository;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
@@ -69,18 +79,13 @@ public class SongController {
         Song song = new Song();
         song.setName(req.name());
         song.setReleaseYear(req.releaseYear());
+        song.setCreatedBy(currentUserService.getCurrentUser());
 
-        if (req.artistIds() != null) {
-            var artists = artistRepository.findAllById(req.artistIds());
-            HashSet<Artist> artistsSet = new HashSet<>();
-            artists.forEach(artistsSet::add);
-            song.setArtists(artistsSet);
-        }
-
-
-        songRepository.save(song);
+        findArtistWithID(req, song);
         return ResponseEntity.created(URI.create("/api/songs/" + song.getSongId())).build();
     }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateSong(@PathVariable Long id,@RequestBody @Valid SongCreateRequest req) {
@@ -97,20 +102,17 @@ public class SongController {
             song.setReleaseYear(req.releaseYear());
         }
 
-        if (req.artistIds() != null) {
-            var artists = artistRepository.findAllById(req.artistIds());
-            HashSet<Artist> artistSet = new HashSet<>();
-            artists.forEach(artistSet::add);
-            song.setArtists(artistSet);
-        }
-
-        songRepository.save(song);
+        findArtistWithID(req, song);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSong(@PathVariable Long id ) {
-        songRepository.deleteById(id);
+        Optional<Song> song = songRepository.findById(id);
+        if (song.isEmpty()) return ResponseEntity.notFound().build();
+        Song s = song.get();
+        s.setDeletedAt(OffsetDateTime.now());
+        songRepository.save(s);
         return ResponseEntity.noContent().build();
     }
 
@@ -123,5 +125,16 @@ public class SongController {
                         .map(Artist::getName)
                         .toList()
         );
+    }
+
+    private void findArtistWithID(@RequestBody @Valid SongCreateRequest req, Song song) {
+        if (req.artistIds() != null) {
+            var artists = artistRepository.findAllById(req.artistIds());
+            HashSet<Artist> artistsSet = new HashSet<>();
+            artists.forEach(artistsSet::add);
+            song.setArtists(artistsSet);
+        }
+
+        songRepository.save(song);
     }
 }

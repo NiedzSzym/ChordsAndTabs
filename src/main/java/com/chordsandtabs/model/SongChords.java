@@ -2,6 +2,8 @@ package com.chordsandtabs.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +26,9 @@ public class SongChords {
     private OffsetDateTime createdAt;
 
     private OffsetDateTime updatedAt;
+
+    @SQLRestriction("deleted_at IS NULL")
+    private OffsetDateTime deletedAt;
     
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -64,5 +69,4 @@ public class SongChords {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private Account createdBy;
-
 }

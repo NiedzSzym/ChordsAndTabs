@@ -2,7 +2,9 @@ package com.chordsandtabs.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,4 +30,7 @@ public class Song {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private Account createdBy;
+
+    @SQLRestriction("deleted_at IS NULL")
+    private OffsetDateTime deletedAt;
 }
