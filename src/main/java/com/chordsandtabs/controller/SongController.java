@@ -37,7 +37,7 @@ public class SongController {
 
     public SongController(SongRepository songRepository,
                           ArtistRepository artistRepository,
-                          AccountRepository accountRepository, CurrentUserService currentUserService) {
+                          CurrentUserService currentUserService) {
         this.songRepository = songRepository;
         this.artistRepository = artistRepository;
         this.currentUserService = currentUserService;
