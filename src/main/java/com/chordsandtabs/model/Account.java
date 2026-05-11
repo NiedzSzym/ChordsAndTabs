@@ -3,7 +3,11 @@ package com.chordsandtabs.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 
 @Entity
@@ -21,17 +25,22 @@ public class Account {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    private LocalDateTime createdAt;
+    @OneToOne(mappedBy = "account")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private AccountProfile profile;
 
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
 
-    private LocalDateTime deletedAt;
+    private OffsetDateTime  updatedAt;
 
-    private LocalDateTime emailVerifiedAt;
+    private OffsetDateTime deletedAt;
+
+    private OffsetDateTime emailVerifiedAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 
 }

@@ -1,9 +1,6 @@
 package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.tuning.TuningCreateRequest;
-import com.chordsandtabs.model.Account;
-import com.chordsandtabs.model.InstrumentType;
-import com.chordsandtabs.model.Song;
 import com.chordsandtabs.model.Tuning;
 import com.chordsandtabs.repository.AccountRepository;
 import com.chordsandtabs.repository.InstrumentTypeRepository;

@@ -3,10 +3,8 @@ package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.song.SongCreateRequest;
 import com.chordsandtabs.dto.song.SongDto;
-import com.chordsandtabs.model.Account;
 import com.chordsandtabs.model.Artist;
 import com.chordsandtabs.model.Song;
-import com.chordsandtabs.repository.AccountRepository;
 import com.chordsandtabs.repository.ArtistRepository;
 import com.chordsandtabs.repository.SongRepository;
 import com.chordsandtabs.service.CurrentUserService;
@@ -17,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
