@@ -19,6 +19,15 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateVerificationToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("type", "EMAIL_VARIFICATION")
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .compact();
+    }
+
+
     public String extractEmail(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }

@@ -1,4 +1,4 @@
-package com.chordsandtabs.dto;
+package com.chordsandtabs.dto.security;
 
 import jakarta.validation.constraints.NotBlank;
 

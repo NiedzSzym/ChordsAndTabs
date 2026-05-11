@@ -1,4 +1,4 @@
-package com.chordsandtabs.dto;
+package com.chordsandtabs.dto.security;
 
 public record AuthResponse(String token) {
     public AuthResponse(String token) {

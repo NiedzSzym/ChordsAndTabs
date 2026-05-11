@@ -8,4 +8,15 @@ spring:
     locations: classpath:db/migration
   application:
     name: ChordsAndTabs
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 587
+    username: YOUR_MAILTRAP_USER
+    password: YOUR_MAILTRAP_PASS
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
