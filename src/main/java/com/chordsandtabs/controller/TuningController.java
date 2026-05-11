@@ -58,7 +58,7 @@ public class TuningController {
         return ResponseEntity.created(URI.create("api/tunings" + tuning.getTuningId())).build();
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTuning(@PathVariable Long id) {
         Optional<Tuning> tuning = tuningRepository.findById(id);
         if (tuning.isEmpty()) return ResponseEntity.notFound().build();
