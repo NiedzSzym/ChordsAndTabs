@@ -10,9 +10,9 @@ spring:
     name: ChordsAndTabs
   mail:
     host: sandbox.smtp.mailtrap.io
-    port: 587
-    username: YOUR_MAILTRAP_USER
-    password: YOUR_MAILTRAP_PASS
+    port: 2525
+    username: 0205ef150346f2
+    password: 250cb5ade767a2
     properties:
       mail:
         smtp:

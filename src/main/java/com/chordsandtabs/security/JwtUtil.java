@@ -22,8 +22,9 @@ public class JwtUtil {
     public String generateVerificationToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("type", "EMAIL_VARIFICATION")
+                .claim("type", "EMAIL_VERIFICATION")
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
