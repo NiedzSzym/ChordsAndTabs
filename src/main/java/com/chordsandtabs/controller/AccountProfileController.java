@@ -2,6 +2,7 @@ package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.profile.AccountProfileDto;
 import com.chordsandtabs.dto.profile.AccountProfileUpdateRequest;
+import com.chordsandtabs.exception.ResourceNotFoundException;
 import com.chordsandtabs.model.Account;
 import com.chordsandtabs.model.AccountProfile;
 import com.chordsandtabs.repository.AccountProfileRepository;
@@ -62,7 +63,7 @@ public class AccountProfileController {
     ResponseEntity<Void> updateProfile(@RequestBody @Valid AccountProfileUpdateRequest req) {
         Account currentUser = currentUserService.getCurrentUser();
         AccountProfile profile = accountProfileRepository.findById(currentUser.getAccountId())
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Profile", currentUser.getAccountId()));
 
         profile.setNickname(req.nickname());
         profile.setBio(req.bio());

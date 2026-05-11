@@ -3,6 +3,7 @@ package com.chordsandtabs.controller;
 import com.chordsandtabs.dto.chord.ChordCreateRequest;
 import com.chordsandtabs.dto.chord.ChordListDto;
 import com.chordsandtabs.dto.chord.ChordSelectDto;
+import com.chordsandtabs.exception.ResourceNotFoundException;
 import com.chordsandtabs.model.Chord;
 import com.chordsandtabs.model.InstrumentType;
 import com.chordsandtabs.model.Tuning;
@@ -63,9 +64,9 @@ public class ChordController {
     @PostMapping
     public ResponseEntity<Void> createChord(@RequestBody @Valid ChordCreateRequest req) {
         InstrumentType instrumentType = instrumentTypeRepository.findById(req.instrumentTypeId())
-                .orElseThrow(() -> new RuntimeException("Instrument type not found: " + req.instrumentTypeId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId()));
         Tuning tuning = tuningRepository.findById(req.tuningId())
-                .orElseThrow(() -> new RuntimeException("Tuning not found: " + req.tuningId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Tuning", req.tuningId()));
 
         Chord chord = new Chord();
         chord.setName(req.name());

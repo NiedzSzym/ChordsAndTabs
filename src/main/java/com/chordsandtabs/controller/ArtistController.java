@@ -2,6 +2,7 @@ package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.artist.ArtistCreateRequest;
 import com.chordsandtabs.dto.artist.ArtistDto;
+import com.chordsandtabs.exception.ResourceNotFoundException;
 import com.chordsandtabs.model.Artist;
 import com.chordsandtabs.repository.ArtistRepository;
 import com.chordsandtabs.service.CurrentUserService;
@@ -54,7 +55,7 @@ public class ArtistController {
     ResponseEntity<Void> updateArtist(@PathVariable Long id,
                                       @RequestBody @Valid ArtistCreateRequest req) {
         Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
         artist.setName(req.name());
         artistRepository.save(artist);
         return ResponseEntity.noContent().build();
@@ -63,7 +64,7 @@ public class ArtistController {
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deleteArtist(@PathVariable Long id) {
         Artist artist = artistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artist not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
         artist.setDeletedAt(OffsetDateTime.now());
         artistRepository.save(artist);
         return ResponseEntity.noContent().build();

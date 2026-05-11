@@ -1,6 +1,7 @@
 package com.chordsandtabs.controller;
 
 import com.chordsandtabs.dto.tuning.TuningCreateRequest;
+import com.chordsandtabs.exception.ResourceNotFoundException;
 import com.chordsandtabs.model.Tuning;
 import com.chordsandtabs.repository.AccountRepository;
 import com.chordsandtabs.repository.InstrumentTypeRepository;
@@ -51,7 +52,7 @@ public class TuningController {
         tuning.setTuning(req.tuning());
         tuning.setInstrumentType(
                 instrumentTypeRepository.findById(req.instrumentTypeId()).orElseThrow(
-                        () -> new RuntimeException("Instrument type not found: " + req.instrumentTypeId())
+                        () -> new ResourceNotFoundException("Instrument", req.instrumentTypeId())
                 )
         );
 

@@ -5,6 +5,7 @@ import com.chordsandtabs.dto.chord.ChordSelectDto;
 import com.chordsandtabs.dto.songChords.SongChordsCreateRequest;
 import com.chordsandtabs.dto.songChords.SongChordsDto;
 import com.chordsandtabs.dto.songChords.SongChordsListDto;
+import com.chordsandtabs.exception.ResourceNotFoundException;
 import com.chordsandtabs.model.*;
 import com.chordsandtabs.repository.*;
 import com.chordsandtabs.service.CurrentUserService;
@@ -82,7 +83,7 @@ public class SongChordsController {
             @RequestBody @Valid SongChordsCreateRequest req
     ) {
         Song song = songRepository.findById(songId)
-                .orElseThrow(() -> new RuntimeException("Song not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Song", songId));
         Account currentUser = currentUserService.getCurrentUser();
         SongChords sc = new SongChords();
         sc.setSong(song);
@@ -90,9 +91,9 @@ public class SongChordsController {
         sc.setCreatedBy(currentUser);
         sc.setStatus(req.status() != null ? Status.valueOf(req.status()) : Status.PUBLIC);
         sc.setNotationType(req.notationType() != null ? NotationType.valueOf(req.notationType()) : null);
-        sc.setKey(keyRepository.findById(req.keyId()).orElseThrow(() -> new RuntimeException("Key not found: " + req.keyId())));
-        sc.setTuning(tuningRepository.findById(req.tuningId()).orElseThrow(() -> new RuntimeException("Tuning not found: " + req.tuningId())));
-        sc.setInstrumentType(instrumentTypeRepository.findById(req.instrumentTypeId()).orElseThrow(() -> new RuntimeException("Instrument type not found: " + req.instrumentTypeId())));
+        sc.setKey(keyRepository.findById(req.keyId()).orElseThrow(() -> new ResourceNotFoundException("Key", req.keyId())));
+        sc.setTuning(tuningRepository.findById(req.tuningId()).orElseThrow(() -> new ResourceNotFoundException("Tuning", req.tuningId())));
+        sc.setInstrumentType(instrumentTypeRepository.findById(req.instrumentTypeId()).orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId())));
         sc.setStrummingPattern(req.strummingPattern());
         sc.setTimeSignature(req.timeSignature());
         sc.setTempo(req.tempo());
@@ -117,14 +118,14 @@ public class SongChordsController {
     ) {
         SongChords sc = songChordsRepository.findById(id)
                 .filter(s -> s.getSong().getSongId().equals(songId))
-                .orElseThrow(() -> new RuntimeException("SongChords not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("SongChords", id));
 
         sc.setKey(keyRepository.findById(req.keyId())
-                .orElseThrow(() -> new RuntimeException("Key not found: " + req.keyId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Key", req.keyId())));
         sc.setTuning(tuningRepository.findById(req.tuningId())
-                .orElseThrow(() -> new RuntimeException("Tuning not found: " + req.tuningId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Tuning", req.tuningId())));
         sc.setInstrumentType(instrumentTypeRepository.findById(req.instrumentTypeId())
-                .orElseThrow(() -> new RuntimeException("Instrument type not found: " + req.instrumentTypeId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId())));
 
         if (req.status() != null) sc.setStatus(Status.valueOf(req.status()));
         if (req.notationType() != null) sc.setNotationType(NotationType.valueOf(req.notationType()));
@@ -152,7 +153,7 @@ public class SongChordsController {
     ) {
         SongChords sc = songChordsRepository.findById(id)
                 .filter(s -> s.getSong().getSongId().equals(songId))
-                .orElseThrow(() -> new RuntimeException("SongChords not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("SongChords", id));
 
         sc.setDeletedAt(OffsetDateTime.now());
         songChordsRepository.save(sc);
