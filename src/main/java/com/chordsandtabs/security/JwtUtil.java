@@ -2,13 +2,15 @@ package com.chordsandtabs.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
 public class JwtUtil {
-    private final String secret = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; //Temp
+    @Value("${app.jwt.secret}")
+    private String secret;
 
     public String generateToken(String email, String role) {
         return Jwts.builder()
