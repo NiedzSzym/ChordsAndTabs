@@ -12,6 +12,8 @@ import com.chordsandtabs.repository.InstrumentTypeRepository;
 import com.chordsandtabs.repository.TuningRepository;
 import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +45,7 @@ public class ChordController {
     }
 
     @GetMapping
+    @Cacheable("chords")
     public List<ChordListDto> getAll() {
         var chords = new ArrayList<Chord>();
         chordRepository.findAll().forEach(chords::add);
@@ -50,6 +53,7 @@ public class ChordController {
     }
 
     @GetMapping("/select")
+    @Cacheable(value = "chords", key = "#tuningId + '-' + #instrumentTypeId")
     public List<ChordSelectDto> getSelect(
             @RequestParam Long tuningId,
             @RequestParam Long instrumentTypeId
@@ -62,6 +66,7 @@ public class ChordController {
     }
 
     @PostMapping
+    @CacheEvict(value = "chords", allEntries = true)
     public ResponseEntity<Void> createChord(@RequestBody @Valid ChordCreateRequest req) {
         InstrumentType instrumentType = instrumentTypeRepository.findById(req.instrumentTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId()));
@@ -80,6 +85,7 @@ public class ChordController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "chords", allEntries = true)
     public ResponseEntity<Void> deleteChord(@PathVariable Long id) {
         Optional<Chord> existing = chordRepository.findById(id);
         if (existing.isEmpty()) {

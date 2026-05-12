@@ -8,6 +8,8 @@ import com.chordsandtabs.repository.InstrumentTypeRepository;
 import com.chordsandtabs.repository.TuningRepository;
 import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,7 @@ public class TuningController {
     }
 
     @GetMapping
+    @Cacheable(value = "tunings", key = "#instrumentTypeId ?: 'all'")
     public List<Tuning> getAll(
             @RequestParam(required = false) Long instrumentTypeId
     ) {
@@ -46,6 +49,7 @@ public class TuningController {
     }
 
     @PostMapping
+    @CacheEvict(value = "tunings", allEntries = true)
     public ResponseEntity<Void> createTuning(@RequestBody @Valid TuningCreateRequest req) {
         Tuning tuning = new Tuning();
         tuning.setCreatedBy(currentUserService.getCurrentUser());
@@ -60,6 +64,7 @@ public class TuningController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "tunings", allEntries = true)
     public ResponseEntity<Void> deleteTuning(@PathVariable Long id) {
         Optional<Tuning> tuning = tuningRepository.findById(id);
         if (tuning.isEmpty()) return ResponseEntity.notFound().build();

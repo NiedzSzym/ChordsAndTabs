@@ -52,7 +52,7 @@ public class SongChordsController {
     }
 
     @GetMapping
-    List<SongChordsListDto> getAll(
+   public List<SongChordsListDto> getAll(
             @PathVariable Long songId,
             @RequestParam(required = false) NotationType notationType,
             @RequestParam(required = false) Long tuningId,
@@ -66,7 +66,7 @@ public class SongChordsController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<SongChordsDto> getSongChords(
+    public ResponseEntity<SongChordsDto> getSongChords(
             @PathVariable Long songId,
             @PathVariable Long id
     ) {
@@ -78,7 +78,7 @@ public class SongChordsController {
     }
 
     @PostMapping
-    ResponseEntity<Void> createSongChords(
+    public ResponseEntity<Void> createSongChords(
             @PathVariable Long songId,
             @RequestBody @Valid SongChordsCreateRequest req
     ) {
@@ -111,7 +111,7 @@ public class SongChordsController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Void> updateSongChords(
+    public ResponseEntity<Void> updateSongChords(
             @PathVariable Long songId,
             @PathVariable Long id,
             @RequestBody @Valid SongChordsCreateRequest req
@@ -147,7 +147,7 @@ public class SongChordsController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteSongChords(
+    public ResponseEntity<Void> deleteSongChords(
             @PathVariable Long songId,
             @PathVariable Long id
     ) {
