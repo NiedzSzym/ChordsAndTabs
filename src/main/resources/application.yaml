@@ -21,5 +21,5 @@ spring:
             enable: true
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:secret}
 
