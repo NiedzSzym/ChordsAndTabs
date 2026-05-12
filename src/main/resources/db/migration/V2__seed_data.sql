@@ -36,34 +36,19 @@ ON CONFLICT DO NOTHING;
 
 -- ─── Test Accounts ──────────────────────────────────────────────────
 -- role_id: 1=ROLE_USER, 2=ROLE_ADMIN
--- password = bcrypt encoded "password123" ($2a$10$...)
+-- password = bcrypt encoded "password123"
 INSERT INTO "account" ("email", "password", "role_id") VALUES
-  ('jan@test.pl', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 1),
-  ('anna@test.pl', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 1),
-  ('admin@test.pl', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 2),
-  ('tester@test.pl', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 1),
-  ('music@test.pl', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 1)
+  ('user@test.pl', '$2a$10$OXwCR4ccPHiIOcRPWdDHPumvxgcAgS6LHUJ7uWgwJLCaS0wFI.IJO', 1),
+  ('admin@test.pl', '$2a$10$OXwCR4ccPHiIOcRPWdDHPumvxgcAgS6LHUJ7uWgwJLCaS0wFI.IJO', 2)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO "account_profile" ("account_id", "nickname", "bio")
-SELECT a.account_id, 'JanGuitar', 'Kocham gitarę od 2010'
-FROM "account" a WHERE a.email = 'jan@test.pl'
-ON CONFLICT DO NOTHING;
-INSERT INTO "account_profile" ("account_id", "nickname", "bio")
-SELECT a.account_id, 'AnnaMusic', 'Gitara i ukulele'
-FROM "account" a WHERE a.email = 'anna@test.pl'
+SELECT a.account_id, 'User', 'Test user'
+FROM "account" a WHERE a.email = 'user@test.pl'
 ON CONFLICT DO NOTHING;
 INSERT INTO "account_profile" ("account_id", "nickname", "bio")
 SELECT a.account_id, 'Admin', 'Administrator'
 FROM "account" a WHERE a.email = 'admin@test.pl'
-ON CONFLICT DO NOTHING;
-INSERT INTO "account_profile" ("account_id", "nickname", "bio")
-SELECT a.account_id, 'Tester01', 'Test account'
-FROM "account" a WHERE a.email = 'tester@test.pl'
-ON CONFLICT DO NOTHING;
-INSERT INTO "account_profile" ("account_id", "nickname", "bio")
-SELECT a.account_id, 'MusicLover', 'Tablatury to moje życie'
-FROM "account" a WHERE a.email = 'music@test.pl'
 ON CONFLICT DO NOTHING;
 
 -- ─── Artists ────────────────────────────────────────────────────────
@@ -371,36 +356,72 @@ ON CONFLICT DO NOTHING;
 
 -- ─── Song Chords (sample tab entries) ───────────────────────────────
 -- These reference real songs, keys, tunings, instruments, and accounts
+WITH
+    user_acc AS (SELECT account_id FROM "account" WHERE email = 'user@test.pl' LIMIT 1),
+    admin_acc AS (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1),
+    klasyczna AS (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
+    std_tuning AS (
+        SELECT t.tuning_id FROM "tuning" t
+                                    JOIN klasyczna k ON t.instrument_type_id = k.instrument_type_id
+        WHERE t.tuning = 'EADGBE' LIMIT 1
+    )
 INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body", "created_by")
 SELECT
-  s.song_id,
-  (SELECT account_id FROM "account" WHERE email = 'jan@test.pl' LIMIT 1),
-  'PUBLIC',
-  'CHORDS',
-  k.key_id,
-  (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id =
-    (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
-  'D DU UDU',
-  '4/4',
-  NULL,
-  NULL,
-  NULL,
-  (SELECT account_id FROM "account" WHERE email = 'jan@test.pl' LIMIT 1)
+    s.song_id,
+    (SELECT account_id FROM user_acc),
+    'PUBLIC',
+    'CHORDS',
+    k.key_id,
+    (SELECT tuning_id FROM std_tuning),
+    (SELECT instrument_type_id FROM klasyczna),
+    'D DU UDU',
+    '4/4',
+    NULL,
+    NULL,
+    NULL,
+    (SELECT account_id FROM user_acc)
 FROM "song" s
-JOIN "key" k ON k.name = 'G' AND k.mode = 'MAJOR'
+         JOIN "key" k ON k.name = 'G' AND k.mode = 'MAJOR'
 WHERE s.name IN (
-  'Wonderwall', 'Knockin'' on Heaven''s Door', 'Good Riddance',
-  'Basket Case', 'Yellow', 'Buddy Holly', 'Santeria',
-  'Iris', 'Sex and Candy', 'Don''t Look Back in Anger'
-)
+                 'Wonderwall', 'Knockin'' on Heaven''s Door', 'Good Riddance',
+                 'Basket Case', 'Yellow', 'Buddy Holly', 'Santeria',
+                 'Iris', 'Sex and Candy', 'Don''t Look Back in Anger'
+    )
+ON CONFLICT DO NOTHING;
+
+WITH
+    user_acc AS (SELECT account_id FROM "account" WHERE email = 'user@test.pl' LIMIT 1),
+    klasyczna AS (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
+    std_tuning AS (
+        SELECT t.tuning_id FROM "tuning" t
+                                    JOIN klasyczna k ON t.instrument_type_id = k.instrument_type_id
+        WHERE t.tuning = 'EADGBE' LIMIT 1
+    )
+INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body", "created_by")
+SELECT
+    s.song_id,
+    (SELECT account_id FROM user_acc),
+    'PUBLIC',
+    'CHORDS',
+    k.key_id,
+    (SELECT tuning_id FROM std_tuning),
+    (SELECT instrument_type_id FROM klasyczna),
+    'D D U U D U',
+    '4/4',
+    NULL,
+    NULL,
+    NULL,
+    (SELECT account_id FROM user_acc)
+FROM "song" s
+         JOIN "key" k ON k.name = 'E' AND k.mode = 'MINOR'
+WHERE s.name IN ('Smells Like Teen Spirit', 'Creep', 'Nothing Else Matters')
 ON CONFLICT DO NOTHING;
 
 -- Some minor key songs
 INSERT INTO "song_chords" ("song_id", "author_id", "status", "notation_type", "key_id", "tuning_id", "instrument_type_id", "strumming_pattern", "time_signature", "tempo", "capo_fret", "song_body", "created_by")
 SELECT
   s.song_id,
-  (SELECT account_id FROM "account" WHERE email = 'anna@test.pl' LIMIT 1),
+  (SELECT account_id FROM "account" WHERE email = 'user@test.pl' LIMIT 1),
   'PUBLIC',
   'CHORDS',
   k.key_id,
@@ -412,7 +433,7 @@ SELECT
   NULL,
   NULL,
   NULL,
-  (SELECT account_id FROM "account" WHERE email = 'anna@test.pl' LIMIT 1)
+  (SELECT account_id FROM "account" WHERE email = 'user@test.pl' LIMIT 1)
 FROM "song" s
 JOIN "key" k ON k.name = 'E' AND k.mode = 'MINOR'
 WHERE s.name IN ('Smells Like Teen Spirit', 'Creep', 'Nothing Else Matters')
