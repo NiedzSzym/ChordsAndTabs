@@ -9,6 +9,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,7 @@ public class ArtistController {
     public List<ArtistDto> getAll() {
         return artistRepository.findAllByOrderByNameAsc()
                 .stream()
+                .filter(a -> a.getCreatedBy() == null || currentUserService.canModify(a.getCreatedBy()))
                 .map(a -> new ArtistDto(a.getArtistId(), a.getName()))
                 .toList();
     }
@@ -40,10 +42,15 @@ public class ArtistController {
     @GetMapping("/{id}")
     @Cacheable(value = "artists", key = "#id")
     public ResponseEntity<ArtistDto> getArtist(@PathVariable Long id) {
-        return artistRepository.findById(id)
-                .map(a -> new ArtistDto(a.getArtistId(), a.getName()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Artist artist = artistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
+
+        if (!currentUserService.canModify(artist.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        ArtistDto dto = new ArtistDto(artist.getArtistId(), artist.getName());
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
@@ -62,6 +69,11 @@ public class ArtistController {
                                       @RequestBody @Valid ArtistCreateRequest req) {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
+
+        if (!currentUserService.canModify(artist.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         artist.setName(req.name());
         artistRepository.save(artist);
         return ResponseEntity.noContent().build();
@@ -72,6 +84,11 @@ public class ArtistController {
     public ResponseEntity<Void> deleteArtist(@PathVariable Long id) {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
+
+        if (!currentUserService.canModify(artist.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         artist.setDeletedAt(OffsetDateTime.now());
         artistRepository.save(artist);
         return ResponseEntity.noContent().build();

@@ -12,6 +12,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongChordsSpecification;
 import jakarta.validation.Valid;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +53,7 @@ public class SongChordsController {
     }
 
     @GetMapping
-   public List<SongChordsListDto> getAll(
+    public List<SongChordsListDto> getAll(
             @PathVariable Long songId,
             @RequestParam(required = false) NotationType notationType,
             @RequestParam(required = false) Long tuningId,
@@ -62,6 +63,7 @@ public class SongChordsController {
         if (notationType != null) spec = spec.and(SongChordsSpecification.hasNotationType(notationType));
         if (tuningId != null) spec = spec.and(SongChordsSpecification.hasTuningId(tuningId));
         if (instrumentTypeId != null) spec = spec.and(SongChordsSpecification.hasInstrumentTypeId(instrumentTypeId));
+        spec = spec.and(SongChordsSpecification.accessibleBy(currentUserService.getCurrentUser()));
         return songChordsRepository.findAll(spec).stream().map(this::toListDto).toList();
     }
 
@@ -70,11 +72,16 @@ public class SongChordsController {
             @PathVariable Long songId,
             @PathVariable Long id
     ) {
-        return songChordsRepository.findById(id)
+        SongChords songChords = songChordsRepository.findById(id)
                 .filter(sc -> sc.getSong().getSongId().equals(songId))
-                .map(this::toDto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("SongChord", id));
+
+        if (!currentUserService.canModify(songChords.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return ResponseEntity.ok(toDto(songChords));
+
     }
 
     @PostMapping
@@ -120,6 +127,10 @@ public class SongChordsController {
                 .filter(s -> s.getSong().getSongId().equals(songId))
                 .orElseThrow(() -> new ResourceNotFoundException("SongChords", id));
 
+        if (!currentUserService.canModify(sc.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         sc.setKey(keyRepository.findById(req.keyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Key", req.keyId())));
         sc.setTuning(tuningRepository.findById(req.tuningId())
@@ -154,6 +165,10 @@ public class SongChordsController {
         SongChords sc = songChordsRepository.findById(id)
                 .filter(s -> s.getSong().getSongId().equals(songId))
                 .orElseThrow(() -> new ResourceNotFoundException("SongChords", id));
+
+        if (!currentUserService.canModify(sc.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         sc.setDeletedAt(OffsetDateTime.now());
         songChordsRepository.save(sc);

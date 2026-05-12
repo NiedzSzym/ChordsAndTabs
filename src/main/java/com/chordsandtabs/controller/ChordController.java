@@ -14,6 +14,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,9 @@ public class ChordController {
     public List<ChordListDto> getAll() {
         var chords = new ArrayList<Chord>();
         chordRepository.findAll().forEach(chords::add);
-        return chords.stream().map(this::toListDto).toList();
+        return chords.stream()
+                .filter(c -> currentUserService.canModify(c.getCreatedBy()))
+                .map(this::toListDto).toList();
     }
 
     @GetMapping("/select")
@@ -61,6 +64,7 @@ public class ChordController {
         return chordRepository
                 .findByTuning_TuningIdAndInstrumentType_InstrumentTypeId(tuningId, instrumentTypeId)
                 .stream()
+                .filter(c -> currentUserService.canModify(c.getCreatedBy()))
                 .map(this::toSelectDto)
                 .toList();
     }
@@ -92,6 +96,11 @@ public class ChordController {
             return ResponseEntity.notFound().build();
         }
         Chord chord = existing.get();
+
+        if (!currentUserService.canModify(chord.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         chord.setDeletedAt(OffsetDateTime.now());
         chordRepository.save(chord);
         return ResponseEntity.noContent().build();

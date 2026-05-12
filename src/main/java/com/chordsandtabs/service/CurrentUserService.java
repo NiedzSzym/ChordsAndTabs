@@ -27,4 +27,10 @@ public class CurrentUserService {
         return accountRepository.findAccountByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
     }
+
+    public boolean canModify(Account owner) {
+        Account current = getCurrentUser();
+        return "ROLE_ADMIN".equals(current.getRole().getName())
+                || current.getAccountId().equals(owner.getAccountId());
+    }
 }

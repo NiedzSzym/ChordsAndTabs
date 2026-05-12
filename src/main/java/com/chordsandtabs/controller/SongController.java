@@ -10,12 +10,15 @@ import com.chordsandtabs.repository.SongRepository;
 import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongSpecification;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +56,7 @@ public class SongController {
         if (artist != null) spec = spec.and(SongSpecification.hasArtist(artist));
         if (year != null) spec = spec.and(SongSpecification.hasYear(year));
         if (name != null) spec = spec.and(SongSpecification.hasNameLike(name));
+        spec = spec.and(SongSpecification.accessibleBy(currentUserService.getCurrentUser()));
 
         Page<Song> page = songRepository.findAll(
                 spec, pageable
@@ -67,6 +71,7 @@ public class SongController {
             @PathVariable Long id
     ) {
         return songRepository.findByIdWithArtists(id)
+                .filter(a -> a.getCreatedBy() == null || currentUserService.canModify(a.getCreatedBy()))
                 .map(this::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -96,6 +101,11 @@ public class SongController {
         }
 
         Song song = existing.get();
+
+        if (!currentUserService.canModify(song.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (req.name() != null) {
             song.setName(req.name());
         }
@@ -110,11 +120,17 @@ public class SongController {
     @DeleteMapping("/{id}")
     @CacheEvict(value = "songs", allEntries = true)
     public ResponseEntity<Void> deleteSong(@PathVariable Long id ) {
-        Optional<Song> song = songRepository.findById(id);
-        if (song.isEmpty()) return ResponseEntity.notFound().build();
-        Song s = song.get();
-        s.setDeletedAt(OffsetDateTime.now());
-        songRepository.save(s);
+        Optional<Song> existing = songRepository.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Song song = existing.get();
+        if (!currentUserService.canModify(song.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        song.setDeletedAt(OffsetDateTime.now());
+        songRepository.save(song);
         return ResponseEntity.noContent().build();
     }
 

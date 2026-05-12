@@ -10,6 +10,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +43,15 @@ public class TuningController {
     public List<Tuning> getAll(
             @RequestParam(required = false) Long instrumentTypeId
     ) {
+        List<Tuning> tunings;
         if (instrumentTypeId == null) {
-            return (List<Tuning>) tuningRepository.findAll();
+            tunings = (List<Tuning>) tuningRepository.findAll();
+        } else {
+            tunings = tuningRepository.findAllByInstrumentType_InstrumentTypeId(instrumentTypeId);
         }
-        return tuningRepository.findAllByInstrumentType_InstrumentTypeId(instrumentTypeId);
+        return tunings.stream()
+                .filter(t -> t.getCreatedBy() == null || currentUserService.canModify(t.getCreatedBy()))
+                .toList();
     }
 
     @PostMapping
@@ -59,7 +65,7 @@ public class TuningController {
                         () -> new ResourceNotFoundException("Instrument", req.instrumentTypeId())
                 )
         );
-
+        tuningRepository.save(tuning);
         return ResponseEntity.created(URI.create("api/tunings" + tuning.getTuningId())).build();
     }
 
@@ -69,6 +75,9 @@ public class TuningController {
         Optional<Tuning> tuning = tuningRepository.findById(id);
         if (tuning.isEmpty()) return ResponseEntity.notFound().build();
         Tuning t = tuning.get();
+        if (!currentUserService.canModify(t.getCreatedBy())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         t.setDeletedAt(OffsetDateTime.now());
         tuningRepository.save(t);
         return ResponseEntity.noContent().build();
