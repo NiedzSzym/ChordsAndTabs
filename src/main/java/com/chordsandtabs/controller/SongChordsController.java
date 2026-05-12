@@ -11,6 +11,7 @@ import com.chordsandtabs.repository.*;
 import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongChordsSpecification;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,7 @@ public class SongChordsController {
     }
 
     @GetMapping
+    @Cacheable(value = "songChords", key = "#currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public List<SongChordsListDto> getAll(
             @PathVariable Long songId,
             @RequestParam(required = false) NotationType notationType,

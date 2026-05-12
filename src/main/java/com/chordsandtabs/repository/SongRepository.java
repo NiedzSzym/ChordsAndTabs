@@ -2,6 +2,7 @@ package com.chordsandtabs.repository;
 
 import com.chordsandtabs.model.Song;
 import org.jspecify.annotations.NonNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,5 +18,6 @@ public interface SongRepository extends CrudRepository<Song, Long>, JpaSpecifica
     Page<Song> findAll(@NonNull Specification<Song> spec, @NonNull Pageable pageable);
 
     @Query("SELECT s FROM Song s LEFT JOIN FETCH s.artists WHERE s.songId = :id")
+    @Cacheable(value = "songById", key = "#id")
     Optional<Song> findByIdWithArtists(@Param("id") Long id);
 }

@@ -21,7 +21,6 @@ public class KeyController {
     }
 
     @GetMapping
-    @Cacheable("keys")
     public List<KeyDto> getAll() {
         var keys = new ArrayList<>(keyRepository.findAllByOrderByNameAsc());
         return keys.stream()

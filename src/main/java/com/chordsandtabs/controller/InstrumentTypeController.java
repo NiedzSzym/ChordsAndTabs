@@ -19,7 +19,6 @@ public class InstrumentTypeController {
     }
 
     @GetMapping
-    @Cacheable("instruments")
     public List<InstrumentType> findAllByOrderByNameAsc() {
         return instrumentTypeRepository.findAllByOrderByNameAsc();
     }

@@ -46,7 +46,7 @@ public class ChordController {
     }
 
     @GetMapping
-    @Cacheable("chords")
+    @Cacheable(value = "chords", key = "#currentUserService.getCurrentUser().getAccountId()")
     public List<ChordListDto> getAll() {
         var chords = new ArrayList<Chord>();
         chordRepository.findAll().forEach(chords::add);
@@ -56,7 +56,7 @@ public class ChordController {
     }
 
     @GetMapping("/select")
-    @Cacheable(value = "chords", key = "#tuningId + '-' + #instrumentTypeId")
+    @Cacheable(value = "chordsSelect", key = "#currentUserService.getCurrentUser().getAccountId() + '-' + #tuningId + '-' + #instrumentTypeId")
     public List<ChordSelectDto> getSelect(
             @RequestParam Long tuningId,
             @RequestParam Long instrumentTypeId
@@ -70,7 +70,6 @@ public class ChordController {
     }
 
     @PostMapping
-    @CacheEvict(value = "chords", allEntries = true)
     public ResponseEntity<Void> createChord(@RequestBody @Valid ChordCreateRequest req) {
         InstrumentType instrumentType = instrumentTypeRepository.findById(req.instrumentTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId()));
@@ -89,7 +88,6 @@ public class ChordController {
     }
 
     @DeleteMapping("/{id}")
-    @CacheEvict(value = "chords", allEntries = true)
     public ResponseEntity<Void> deleteChord(@PathVariable Long id) {
         Optional<Chord> existing = chordRepository.findById(id);
         if (existing.isEmpty()) {
