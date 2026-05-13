@@ -55,6 +55,7 @@ public class TuningController {
     }
 
     @PostMapping
+    @CacheEvict(value = "tunings", allEntries = true)
     public ResponseEntity<Void> createTuning(@RequestBody @Valid TuningCreateRequest req) {
         Tuning tuning = new Tuning();
         tuning.setCreatedBy(currentUserService.getCurrentUser());
@@ -69,6 +70,7 @@ public class TuningController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "tunings", allEntries = true)
     public ResponseEntity<Void> deleteTuning(@PathVariable Long id) {
         Optional<Tuning> tuning = tuningRepository.findById(id);
         if (tuning.isEmpty()) return ResponseEntity.notFound().build();

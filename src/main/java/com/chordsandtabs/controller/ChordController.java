@@ -14,6 +14,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -70,6 +71,10 @@ public class ChordController {
     }
 
     @PostMapping
+    @Caching(evict = {
+            @CacheEvict(value = "chords", key = "@currentUserService.getCurrentUser().getAccountId()"),
+            @CacheEvict(value = "chordsSelect", allEntries = true)
+    })
     public ResponseEntity<Void> createChord(@RequestBody @Valid ChordCreateRequest req) {
         InstrumentType instrumentType = instrumentTypeRepository.findById(req.instrumentTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instrument", req.instrumentTypeId()));
@@ -88,6 +93,10 @@ public class ChordController {
     }
 
     @DeleteMapping("/{id}")
+    @Caching(evict = {
+            @CacheEvict(value = "chords", key = "@currentUserService.getCurrentUser().getAccountId()"),
+            @CacheEvict(value = "chordsSelect", allEntries = true)
+    })
     public ResponseEntity<Void> deleteChord(@PathVariable Long id) {
         Optional<Chord> existing = chordRepository.findById(id);
         if (existing.isEmpty()) {

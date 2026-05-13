@@ -79,6 +79,7 @@ public class SongController {
 
 
     @PostMapping
+    @CacheEvict(value = "songs", allEntries = true)
     public ResponseEntity<Void> createSong(@RequestBody @Valid SongCreateRequest req) {
         Song song = new Song();
         song.setName(req.name());
@@ -92,6 +93,7 @@ public class SongController {
 
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "songs", allEntries = true)
     public ResponseEntity<Void> updateSong(@PathVariable Long id,@RequestBody @Valid SongCreateRequest req) {
         Optional<Song> existing = songRepository.findById(id);
         if (existing.isEmpty()) {
@@ -116,6 +118,7 @@ public class SongController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "songs", allEntries = true)
     public ResponseEntity<Void> deleteSong(@PathVariable Long id ) {
         Optional<Song> existing = songRepository.findById(id);
         if (existing.isEmpty()) {

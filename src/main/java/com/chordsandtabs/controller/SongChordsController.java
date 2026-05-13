@@ -11,6 +11,7 @@ import com.chordsandtabs.repository.*;
 import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongChordsSpecification;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -87,6 +88,7 @@ public class SongChordsController {
     }
 
     @PostMapping
+    @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> createSongChords(
             @PathVariable Long songId,
             @RequestBody @Valid SongChordsCreateRequest req
@@ -120,6 +122,7 @@ public class SongChordsController {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> updateSongChords(
             @PathVariable Long songId,
             @PathVariable Long id,
@@ -160,6 +163,7 @@ public class SongChordsController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> deleteSongChords(
             @PathVariable Long songId,
             @PathVariable Long id

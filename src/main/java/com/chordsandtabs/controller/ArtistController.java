@@ -53,6 +53,7 @@ public class ArtistController {
     }
 
     @PostMapping
+    @CacheEvict(value = "artists", key = "@currentUserService.getCurrentUser().getAccountId()")
     public ResponseEntity<Void> createArtist(@RequestBody @Valid ArtistCreateRequest req) {
         Artist artist = new Artist();
         artist.setName(req.name());
@@ -62,6 +63,7 @@ public class ArtistController {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = "artists", key = "@currentUserService.getCurrentUser().getAccountId()")
     public ResponseEntity<Void> updateArtist(@PathVariable Long id,
                                       @RequestBody @Valid ArtistCreateRequest req) {
         Artist artist = artistRepository.findById(id)
@@ -77,6 +79,7 @@ public class ArtistController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = "artists", key = "@currentUserService.getCurrentUser().getAccountId()")
     public ResponseEntity<Void> deleteArtist(@PathVariable Long id) {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", id));
