@@ -54,7 +54,7 @@ public class SongChordsController {
     }
 
     @GetMapping
-    @Cacheable(value = "songChords", key = "#currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
+    @Cacheable(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public List<SongChordsListDto> getAll(
             @PathVariable Long songId,
             @RequestParam(required = false) NotationType notationType,

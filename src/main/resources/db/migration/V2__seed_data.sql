@@ -252,105 +252,105 @@ INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering
 SELECT 'C',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,3,2,0,1,0],"fingers":[null,3,2,null,1,null],"barre":null}',
+   '0-3-2-0-1-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'D',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,3,2],"fingers":[null,null,null,1,3,2],"barre":null}',
+  '0-0-0-2-3-2',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'E',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,2,1,0,0],"fingers":[null,2,3,1,null,null],"barre":null}',
+  '0-2-2-1-0-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Em',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,2,0,0,0],"fingers":[null,2,3,null,null,null],"barre":null}',
+  '0-2-2-0-0-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'F',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[1,1,2,3,1,1],"fingers":[1,1,2,3,1,1],"barre":1}',
+  '1-1-2-3-1-1',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'G',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[3,2,0,0,0,3],"fingers":[2,1,null,null,null,3],"barre":null}',
+  '3-2-0-0-0-3',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'A',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,2,2,0],"fingers":[null,null,1,2,3,null],"barre":null}',
+  '0-0-2-2-2-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Am',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,2,1,0],"fingers":[null,null,2,3,1,null],"barre":null}',
+  '0-0-2-2-1-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Bm',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,2,4,4,3,2],"fingers":[null,1,3,4,2,1],"barre":2}',
+  '0-2-4-4-3-2',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Dm',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,3,1],"fingers":[null,null,null,2,3,1],"barre":null}',
+  '0-0-0-2-3-1',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'A7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,0,2,0,2,0],"fingers":[null,null,1,null,2,null],"barre":null}',
+  '0-0-2-0-2-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'D7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,0,2,1,2],"fingers":[null,null,null,2,1,3],"barre":null}',
+  '0-0-0-2-1-2',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'E7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[0,2,0,1,0,0],"fingers":[null,2,null,1,null,null],"barre":null}',
+  '0-2-0-1-0-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Fmaj7',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,null,3,2,1,0],"fingers":[null,null,3,2,1,null],"barre":null}',
+  '0-0-3-2-1-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 INSERT INTO "chord" ("name", "instrument_type_id", "tuning_id", "chord_fingering", "created_by")
 SELECT 'Cadd9',
   (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1),
   (SELECT tuning_id FROM "tuning" WHERE tuning = 'EADGBE' AND instrument_type_id = (SELECT instrument_type_id FROM "instrument_type" WHERE name = 'Gitara klasyczna' LIMIT 1) LIMIT 1),
-  '{"frets":[null,3,2,0,3,0],"fingers":[null,2,1,null,3,null],"barre":null}',
+  '0-3-2-0-3-0',
   (SELECT account_id FROM "account" WHERE email = 'admin@test.pl' LIMIT 1)
 ON CONFLICT DO NOTHING;
 

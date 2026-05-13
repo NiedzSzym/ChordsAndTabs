@@ -46,7 +46,7 @@ public class ChordController {
     }
 
     @GetMapping
-    @Cacheable(value = "chords", key = "#currentUserService.getCurrentUser().getAccountId()")
+    @Cacheable(value = "chords", key = "@currentUserService.getCurrentUser().getAccountId()")
     public List<ChordListDto> getAll() {
         var chords = new ArrayList<Chord>();
         chordRepository.findAll().forEach(chords::add);
@@ -56,7 +56,7 @@ public class ChordController {
     }
 
     @GetMapping("/select")
-    @Cacheable(value = "chordsSelect", key = "#currentUserService.getCurrentUser().getAccountId() + '-' + #tuningId + '-' + #instrumentTypeId")
+    @Cacheable(value = "chordsSelect", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #tuningId + '-' + #instrumentTypeId")
     public List<ChordSelectDto> getSelect(
             @RequestParam Long tuningId,
             @RequestParam Long instrumentTypeId

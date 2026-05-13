@@ -41,7 +41,8 @@ CREATE TABLE "tuning" (
   "tuning_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "tuning" VARCHAR(12) NOT NULL ,
   "instrument_type_id" INT REFERENCES "instrument_type" ("instrument_type_id"),
-  "created_by" BIGINT REFERENCES "account" ("account_id")
+  "created_by" BIGINT REFERENCES "account" ("account_id"),
+  "deleted_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "song" (
@@ -93,7 +94,7 @@ CREATE TABLE "chord" (
   "name" VARCHAR(20) NOT NULL,
   "instrument_type_id" INT NOT NULL REFERENCES "instrument_type" ("instrument_type_id"),
   "tuning_id" INT NOT NULL REFERENCES "tuning" ("tuning_id"),
-  "chord_fingering" JSON NOT NULL,
+  "chord_fingering" TEXT NOT NULL,
   "created_by" BIGINT REFERENCES "account" ("account_id"),
   "deleted_at" TIMESTAMPTZ
 );

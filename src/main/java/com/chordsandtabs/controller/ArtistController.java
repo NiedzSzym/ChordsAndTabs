@@ -30,7 +30,7 @@ public class ArtistController {
     }
 
     @GetMapping
-    @Cacheable(value = "artists", key = "#currentUserService.getCurrentUser().getAccountId()")
+    @Cacheable(value = "artists", key = "@currentUserService.getCurrentUser().getAccountId()")
     public List<ArtistDto> getAll() {
         return artistRepository.findAllByOrderByNameAsc()
                 .stream()

@@ -45,7 +45,7 @@ public class SongController {
     }
 
     @GetMapping
-    @Cacheable()
+    @Cacheable(value = "songs", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #artist + '-' + #year + '-' + #name")
     public Page<SongDto> getAll(
             @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(required = false) String artist,

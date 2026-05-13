@@ -39,7 +39,7 @@ public class TuningController {
     }
 
     @GetMapping
-    @Cacheable(value = "tunings", key = "#currentUserService.getCurrentUser().getAccountId() + '-' + (#instrumentTypeId ?: 'all')")
+    @Cacheable(value = "tunings", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + (#instrumentTypeId ?: 'all')")
     public List<Tuning> getAll(
             @RequestParam(required = false) Long instrumentTypeId
     ) {
