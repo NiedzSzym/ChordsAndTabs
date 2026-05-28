@@ -16,8 +16,8 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager cm = new CaffeineCacheManager(
                 "instruments", "keys",
-                "songById", "artistById", "chordById", "tuningById", "songChordsById",
-                "artists", "chords", "tunings", "songChords", "chordsSelect"
+                "songById", "artistsById", "chordById", "tuningById", "songChordsById",
+                "artists", "chords", "tunings", "songChords", "chordsSelect", "songs"
         );
         cm.setCaffeine(Caffeine.newBuilder()
                 .expireAfterWrite(1, TimeUnit.HOURS)

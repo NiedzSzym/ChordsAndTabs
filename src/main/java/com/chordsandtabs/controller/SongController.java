@@ -11,6 +11,7 @@ import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongSpecification;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class SongController {
     @GetMapping
     @Cacheable(value = "songs", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #artist + '-' + #year + '-' + #name")
     public Page<SongDto> getAll(
-            @PageableDefault(size = 20) Pageable pageable,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String name

@@ -1,15 +1,14 @@
 package com.chordsandtabs.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,6 +17,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(Map.of(
                 "error", "Not Found",
                 "message", ex.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthentication(AuthenticationException ex) {
+        return ResponseEntity.status(UNAUTHORIZED).body(Map.of(
+                "error", "Unauthorized",
+                "message", "Invalid email or password"
         ));
     }
 
