@@ -1,33 +1,35 @@
 # ChordsAndTabs
 
-A REST API for sharing and discovering guitar chords, tabs, tunings, and songs. Built with Spring Boot 4.0 and Java 21, it lets users browse chord libraries, create tablature entries for songs, and manage their own content with full ownership control.
+A full-stack application for sharing and discovering guitar chords, tabs, tunings, and songs. Built with Spring Boot 4.0 + Java 21 (backend) and Angular 21 (frontend).
 
 ## Features
 
-- **Authentication & Authorization** - JWT-based login/registration with two roles: `ROLE_USER` and `ROLE_ADMIN`. Email verification flow included. Admins can moderate all content; regular users can only modify their own.
-- **Songs & Artists** - Browse a curated library of songs with artist associations. Filter by name, artist, and release year with pagination.
-- **Chords** - Define chord fingerings for any instrument/tuning combination. Fingerings stored as hyphen-separated fret numbers (e.g. `0-3-2-0-1-0` for C major). Custom validation ensures format correctness.
-- **Tunings** - Manage instrument tunings (standard, drop D, open G, etc.) scoped to instrument type.
-- **Song Chords (Tabs)** - The core entity: a tab/chord sheet for a song. Includes key, tuning, instrument, strumming pattern, time signature, tempo, capo position, and the full song body text. Supports `CHORDS` and `TABS` notation types with `PUBLIC`, `PRIVATE`, or `ARCHIVED` status.
-- **Soft Delete** - All resources use `deleted_at` with `@SQLRestriction`, so nothing is ever permanently lost.
-- **Caching** - Spring Cache with Caffeine, per-user cache keys to isolate data between users. Caches are automatically evicted on write operations.
-- **OpenAPI / Swagger** - Interactive API documentation at `/swagger-ui.html` with JWT bearer token support.
-- **Rich Seed Data** - 90+ artists, 130+ songs, basic open chords (C, D, E, Em, F, G, A, Am, Bm, Dm, A7, D7, E7, Fmaj7, Cadd9), and sample tab entries for popular songs.
+- **Authentication & Authorization** — JWT-based login/registration with two roles: `ROLE_USER` and `ROLE_ADMIN`. Email verification flow included. Admins can moderate all content; regular users can only modify their own.
+- **Songs & Artists** — Browse a curated library of songs with artist associations. Filter by name, artist, and release year with pagination.
+- **Chords** — Define chord fingerings for any instrument/tuning combination. Fingerings stored as hyphen-separated fret numbers (e.g. `0-3-2-0-1-0` for C major). Custom validation ensures format correctness.
+- **Tunings** — Manage instrument tunings (standard, drop D, open G, etc.) scoped to instrument type.
+- **Song Chords (Tabs)** — The core entity: a tab/chord sheet for a song. Includes key, tuning, instrument, strumming pattern, time signature, tempo, capo position, and the full song body text. Supports `CHORDS` and `TABS` notation types with `PUBLIC`, `PRIVATE`, or `ARCHIVED` status.
+- **Soft Delete** — All resources use `deleted_at` with `@SQLRestriction`, so nothing is ever permanently lost.
+- **Caching** — Spring Cache with Caffeine, per-user cache keys to isolate data between users. Caches are automatically evicted on write operations.
+- **OpenAPI / Swagger** — Interactive API documentation at `/swagger-ui.html` with JWT bearer token support.
+- **Rich Seed Data** — 90+ artists, 130+ songs, basic open chords (C, D, E, Em, F, G, A, Am, Bm, Dm, A7, D7, E7, Fmaj7, Cadd9), and sample tab entries for popular songs.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | Spring Boot 4.0.3 |
+| Backend Framework | Spring Boot 4.0.3 |
 | Language | Java 21 |
+| Frontend | Angular 21, SSR |
 | Database | PostgreSQL 16 |
 | ORM | Hibernate / JPA |
 | Migrations | Flyway |
-| Auth | JWT (jjwt 0.11.5), BCrypt |
+| Auth | JWT (jjwt 0.12.6), BCrypt |
 | Cache | Caffeine |
 | API Docs | Springdoc OpenAPI 2.8.5 |
 | Validation | Jakarta Validation |
-| Build | Maven |
+| Build (backend) | Maven |
+| Build (frontend) | npm |
 | Dev Tools | Lombok, Docker Compose |
 
 ## Getting Started
@@ -35,22 +37,43 @@ A REST API for sharing and discovering guitar chords, tabs, tunings, and songs. 
 ### Prerequisites
 
 - Java 21
+- Node.js 20+ and npm
 - Docker (for PostgreSQL) or a local PostgreSQL 16 instance
 
-### 1. Clone and run
+### 1. Start the database
 
 ```bash
-./mvnw spring-boot:run
+docker compose up -d
 ```
 
-This automatically starts PostgreSQL via Docker Compose (thanks to `spring-boot-docker-compose`).
+Starts PostgreSQL 16 on `localhost:5432` and pgAdmin on `localhost:5050`.
 
-### 2. Access the API
+### 2. Start the backend
 
-- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- API base: `http://localhost:8080/api`
+```bash
+./backend/mvnw spring-boot:run
+```
 
-### 3. Test accounts
+The `spring-boot-docker-compose` dependency will also auto-start PostgreSQL if it's not already running. The API will be available at `http://localhost:8080`.
+
+### 3. Start the frontend
+
+```bash
+cd frontend
+npm install    # first time only
+npm start      # starts on http://localhost:4200
+```
+
+The Angular dev server proxies API requests to `localhost:8080`.
+
+### 4. Access the application
+
+- **Frontend**: [http://localhost:4200](http://localhost:4200)
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **API base**: `http://localhost:8080/api`
+- **pgAdmin**: [http://localhost:5050](http://localhost:5050) (admin@email.com / admin)
+
+### Test accounts
 
 | Email | Password | Role |
 |---|---|---|
@@ -128,46 +151,82 @@ Authorization: Bearer <token>
 |---|---|---|
 | GET | `/api/instruments` | List instrument types |
 | GET | `/api/keys` | List musical keys |
+| GET | `/api/notation-types` | List notation types |
 | GET/PUT | `/api/profile` | Get/update account profile |
 
 ## Project Structure
 
 ```
-src/main/java/com/chordsandtabs/
-├── ProjectApplication.java
-├── config/           # Security, Cache, OpenAPI, TestDataSeeder
-├── controller/       # REST controllers
-├── dto/              # Request/response records
-├── exception/        # Global exception handler
-├── model/            # JPA entities
-├── repository/       # Spring Data repositories
-├── security/         # JWT filter, util, UserDetailsService
-├── service/          # CurrentUserService, EmailService
-├── specification/    # JPA Specifications for dynamic queries
-└── validation/       # Custom validators (ChordFingering)
+ChordsAndTabs/
+├── backend/
+│   ├── src/main/java/com/chordsandtabs/
+│   │   ├── ProjectApplication.java
+│   │   ├── config/           # Security, Cache, OpenAPI, TestDataSeeder
+│   │   ├── controller/       # REST controllers
+│   │   ├── dto/              # Request/response records
+│   │   ├── exception/        # Global exception handler
+│   │   ├── model/            # JPA entities
+│   │   ├── repository/       # Spring Data repositories
+│   │   ├── security/         # JWT filter, util, UserDetailsService
+│   │   ├── service/          # CurrentUserService, EmailService
+│   │   ├── specification/    # JPA Specifications for dynamic queries
+│   │   └── validation/       # Custom validators (ChordFingering)
+│   ├── src/main/resources/
+│   │   └── db/migration/     # Flyway migrations (V1, V2)
+│   └── pom.xml
+├── frontend/
+│   ├── src/app/
+│   │   ├── components/       # Angular components
+│   │   ├── services/         # API client services
+│   │   ├── interceptors/     # HTTP interceptors (auth)
+│   │   └── layouts/          # Layout components
+│   └── package.json
+├── compose.yaml               # PostgreSQL + pgAdmin for local dev
+├── .env                       # Environment variables (dev defaults)
+└── AGENTS.md                  # Dev notes for AI assistants
 ```
 
 ## Database
 
-Migrations in `src/main/resources/db/migration/`:
-- **V1** - Initial schema (tables, enums, seed roles and instrument types)
-- **V2** - Seed data (artists, songs, chords, sample tabs)
+Migrations in `backend/src/main/resources/db/migration/`:
+- **V1** — Initial schema (tables, enums, seed roles and instrument types)
+- **V2** — Seed data (artists, songs, chords, sample tabs)
 
 ## Development
 
 ```bash
+# Backend
+
 # Run all tests
-./mvnw test
+./backend/mvnw test
+
+# Run a single test class
+./backend/mvnw test -Dtest=ClassName
 
 # Compile (triggers Lombok annotation processing)
-./mvnw clean compile
+./backend/mvnw clean compile
 
-# Start with separate Docker
-docker compose up -d
-./mvnw spring-boot:run
+# Start backend with dev database
+./backend/mvnw spring-boot:run
+
+# Reset database (deletes all data)
+docker compose down -v && docker compose up -d
 ```
 
-### Environment Variables
+```bash
+# Frontend
+
+# Install dependencies (first time)
+cd frontend && npm install
+
+# Start dev server
+cd frontend && npm start
+
+# Run tests
+cd frontend && npm test
+```
+
+## Environment Variables
 
 | Variable | Default | Description |
 |---|---|---|
