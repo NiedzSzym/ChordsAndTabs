@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@SQLRestriction("deleted_at IS NULL")
 public class SongChords {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,6 @@ public class SongChords {
 
     private OffsetDateTime updatedAt;
 
-    @SQLRestriction("deleted_at IS NULL")
     private OffsetDateTime deletedAt;
     
     @Enumerated(EnumType.STRING)

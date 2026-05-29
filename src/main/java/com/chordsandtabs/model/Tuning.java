@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Data
+@SQLRestriction("deleted_at IS NULL")
 public class Tuning {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +24,5 @@ public class Tuning {
     @JoinColumn(name = "created_by")
     private Account createdBy;
 
-    @SQLRestriction("deleted_at IS NULL")
     private OffsetDateTime deletedAt;
 }

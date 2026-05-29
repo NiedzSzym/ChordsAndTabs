@@ -12,6 +12,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@SQLRestriction("deleted_at IS NULL")
 public class Chord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +39,5 @@ public class Chord {
     @JoinColumn(name = "created_by")
     private Account createdBy;
 
-    @SQLRestriction("deleted_at IS NULL")
     private OffsetDateTime deletedAt;
 }

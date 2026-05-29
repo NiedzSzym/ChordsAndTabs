@@ -7,6 +7,11 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 public class SongSpecification {
+    public static Specification<Song> hasCreatedBy(Account user) {
+        return (root, query, cb) ->
+                cb.equal(root.get("createdBy").get("accountId"), user.getAccountId());
+    }
+
     public static Specification<Song> accessibleBy(Account user) {
         return (root, query, cb) -> {
             if("ROLE_ADMIN".equals(user.getRole().getName())) return cb.conjunction();

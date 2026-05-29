@@ -14,6 +14,7 @@ import org.apache.coyote.Response;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,12 +47,13 @@ public class SongController {
     }
 
     @GetMapping
-    @Cacheable(value = "songs", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #artist + '-' + #year + '-' + #name")
+    @Cacheable(value = "songs", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #artist + '-' + #year + '-' + #name + '-' + #mySongs")
     public Page<SongDto> getAll(
             @ParameterObject @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean mySongs
     ) {
 
         Specification<Song> spec = Specification.unrestricted();
@@ -59,10 +61,11 @@ public class SongController {
         if (year != null) spec = spec.and(SongSpecification.hasYear(year));
         if (name != null) spec = spec.and(SongSpecification.hasNameLike(name));
         spec = spec.and(SongSpecification.accessibleBy(currentUserService.getCurrentUser()));
+        if (Boolean.TRUE.equals(mySongs)) {
+            spec = spec.and(SongSpecification.hasCreatedBy(currentUserService.getCurrentUser()));
+        }
 
-        Page<Song> page = songRepository.findAll(
-                spec, pageable
-        );
+        Page<Song> page = songRepository.findAll(spec, pageable);
 
         return page.map(this::toDto);
     }
@@ -80,7 +83,10 @@ public class SongController {
 
 
     @PostMapping
-    @CacheEvict(value = "songs", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "songs", allEntries = true),
+            @CacheEvict(value = "songById", allEntries = true)
+    })
     public ResponseEntity<Void> createSong(@RequestBody @Valid SongCreateRequest req) {
         Song song = new Song();
         song.setName(req.name());
@@ -94,7 +100,10 @@ public class SongController {
 
 
     @PutMapping("/{id}")
-    @CacheEvict(value = "songs", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "songs", allEntries = true),
+            @CacheEvict(value = "songById", allEntries = true)
+    })
     public ResponseEntity<Void> updateSong(@PathVariable Long id,@RequestBody @Valid SongCreateRequest req) {
         Optional<Song> existing = songRepository.findById(id);
         if (existing.isEmpty()) {
@@ -119,7 +128,10 @@ public class SongController {
     }
 
     @DeleteMapping("/{id}")
-    @CacheEvict(value = "songs", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "songs", allEntries = true),
+            @CacheEvict(value = "songById", allEntries = true)
+    })
     public ResponseEntity<Void> deleteSong(@PathVariable Long id ) {
         Optional<Song> existing = songRepository.findById(id);
         if (existing.isEmpty()) {
@@ -142,7 +154,8 @@ public class SongController {
                 song.getReleaseYear(),
                 song.getArtists().stream()
                         .map(Artist::getName)
-                        .toList()
+                        .toList(),
+                song.getCreatedBy() != null ? song.getCreatedBy().getEmail() : null
         );
     }
 

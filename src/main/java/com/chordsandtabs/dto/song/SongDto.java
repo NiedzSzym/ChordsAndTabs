@@ -9,5 +9,6 @@ public record SongDto(
         String name,
         Integer year,
         @NotBlank
-        List<String> artistNames
+        List<String> artistNames,
+        String createdBy
 ) {}
