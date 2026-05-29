@@ -9,11 +9,11 @@ services:
       - DB_PORT=5432
       - DB_NAME=mydatabase
       - DB_USER=myuser
-      - DB_PASSWORD=${DB_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - MAIL_HOST=${MAIL_HOST}
-      - MAIL_USER=${MAIL_USER}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - JWT_SECRET=${JWT_SECRET:-secret}
+      - MAIL_HOST=${MAIL_HOST:-sandbox.smtp.mailtrap.io}
+      - MAIL_USER=${MAIL_USER:-api}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -24,7 +24,7 @@ services:
     environment:
       - POSTGRES_DB=mydatabase
       - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

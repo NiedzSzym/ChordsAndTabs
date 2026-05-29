@@ -191,7 +191,6 @@ ChordsAndTabs/
 │   │   ├── interceptors/     # HTTP interceptors (auth)
 │   │   └── layouts/          # Layout components
 │   └── package.json
-└── AGENTS.md                  # Dev notes for AI assistants
 ```
 
 ## Database
