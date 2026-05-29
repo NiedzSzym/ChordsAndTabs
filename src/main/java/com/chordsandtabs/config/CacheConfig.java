@@ -21,7 +21,8 @@ public class CacheConfig {
         );
         cm.setCaffeine(Caffeine.newBuilder()
                 .expireAfterWrite(1, TimeUnit.HOURS)
-                .maximumSize(1000));
+                .maximumSize(1000)
+                .recordStats());
         return cm;
     }
 }

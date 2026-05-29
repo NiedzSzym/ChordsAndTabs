@@ -10,7 +10,6 @@ import com.chordsandtabs.repository.SongRepository;
 import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongSpecification;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,8 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -32,6 +31,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/songs")
+@Transactional(readOnly = true)
 public class SongController {
 
     private final SongRepository songRepository;
@@ -83,6 +83,7 @@ public class SongController {
 
 
     @PostMapping
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "songs", allEntries = true),
             @CacheEvict(value = "songById", allEntries = true)
@@ -100,6 +101,7 @@ public class SongController {
 
 
     @PutMapping("/{id}")
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "songs", allEntries = true),
             @CacheEvict(value = "songById", allEntries = true)
@@ -128,6 +130,7 @@ public class SongController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "songs", allEntries = true),
             @CacheEvict(value = "songById", allEntries = true)
