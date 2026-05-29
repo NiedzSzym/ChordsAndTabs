@@ -80,7 +80,7 @@ FROM (VALUES
   ('Manic Street Preachers'), ('Ash'), ('Supergrass'), ('Ocean Colour Scene'),
   ('Dodgy'), ('Cast'), ('Shed Seven'), ('Kula Shaker')
 ) AS v (name)
-ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name, created_by) DO NOTHING;
 
 -- ─── Songs ──────────────────────────────────────────────────────────
 -- release_year = NULL for songs where year is not applicable

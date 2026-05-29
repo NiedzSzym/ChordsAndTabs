@@ -54,7 +54,8 @@ CREATE TABLE "song" (
 );
 CREATE TABLE "artist" (
   "artist_id" BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "name" VARCHAR(100) UNIQUE NOT NULL,
+  "name" VARCHAR(100) NOT NULL,
+  UNIQUE ("name", "created_by"),
   "created_by" BIGINT REFERENCES "account" ("account_id"),
   "deleted_at" TIMESTAMPTZ
 );
@@ -65,17 +66,15 @@ CREATE TABLE "artist_song" (
   PRIMARY KEY ("song_id", "artist_id")
 );
 
-CREATE TYPE notation_type_enum AS ENUM ('CHORDS', 'TABS');
-CREATE TYPE status_enum AS ENUM ('PUBLIC', 'PRIVATE', 'ARCHIVED');
-
 CREATE TABLE "song_chords" (
   "song_chords_id" SERIAL PRIMARY KEY,
-  "song_id" INT NOT NULL REFERENCES "song" ("song_id"),
-  "author_id" INT NOT NULL REFERENCES "account" ("account_id"),
-  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "song_id" INT NOT NULL,
+  "author_id" BIGINT REFERENCES "account" ("account_id"),
+  "created_at" TIMESTAMPTZ,
   "updated_at" TIMESTAMPTZ,
-  "status" status_enum NOT NULL DEFAULT 'PUBLIC',
-  "notation_type" notation_type_enum,
+  "deleted_at" TIMESTAMPTZ,
+  "status" VARCHAR(10) NOT NULL DEFAULT 'PUBLIC',
+  "notation_type" VARCHAR(10),
   "key_id" INT REFERENCES "key" ("key_id"),
   "tuning_id" INT REFERENCES "tuning" ("tuning_id"),
   "instrument_type_id" INT REFERENCES "instrument_type" ("instrument_type_id"),
@@ -84,8 +83,7 @@ CREATE TABLE "song_chords" (
   "tempo" INT,
   "capo_fret" INT,
   "song_body" TEXT,
-  "created_by" BIGINT REFERENCES "account" ("account_id"),
-  "deleted_at" TIMESTAMPTZ
+  "created_by" BIGINT REFERENCES "account" ("account_id")
 );
 
 

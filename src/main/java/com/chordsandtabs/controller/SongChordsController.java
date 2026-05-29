@@ -11,6 +11,7 @@ import com.chordsandtabs.repository.*;
 import com.chordsandtabs.service.CurrentUserService;
 import com.chordsandtabs.specification.SongChordsSpecification;
 import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("api/songs/{songId}/chords")
+@Transactional(readOnly = true)
 public class SongChordsController {
     SongChordsRepository songChordsRepository;
     ChordRepository chordRepository;
@@ -88,6 +90,7 @@ public class SongChordsController {
     }
 
     @PostMapping
+    @Transactional
     @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> createSongChords(
             @PathVariable Long songId,
@@ -122,6 +125,7 @@ public class SongChordsController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> updateSongChords(
             @PathVariable Long songId,
@@ -163,6 +167,7 @@ public class SongChordsController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     @CacheEvict(value = "songChords", key = "@currentUserService.getCurrentUser().getAccountId() + '-' + #songId")
     public ResponseEntity<Void> deleteSongChords(
             @PathVariable Long songId,
