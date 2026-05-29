@@ -10,7 +10,7 @@ services:
       - DB_NAME=mydatabase
       - DB_USER=myuser
       - DB_PASSWORD=${DB_PASSWORD:-secret}
-      - JWT_SECRET=${JWT_SECRET:-secret}
+      - JWT_SECRET=${JWT_SECRET:-my-super-secret-jwt-key-that-is-at-least-256-bits-long}
       - MAIL_HOST=${MAIL_HOST:-sandbox.smtp.mailtrap.io}
       - MAIL_USER=${MAIL_USER:-api}
       - MAIL_PASSWORD=${MAIL_PASSWORD:-}

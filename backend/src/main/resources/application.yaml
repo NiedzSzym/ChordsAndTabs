@@ -30,7 +30,7 @@ springdoc:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:secret}
+    secret: ${JWT_SECRET:my-super-secret-jwt-key-that-is-at-least-256-bits-long}
 
 
 
