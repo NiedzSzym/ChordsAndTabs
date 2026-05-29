@@ -43,7 +43,7 @@ A full-stack application for sharing and discovering guitar chords, tabs, tuning
 ### 1. Configure environment
 
 ```bash
-cp .env.example .env    # optional — defaults work out of the box
+cd backend && cp .env.example .env    # optional — defaults work out of the box
 ```
 
 The `.env` file is only needed if you want to customize database credentials or SMTP settings. All values have sensible defaults defined in `backend/src/main/resources/application.yaml`.
@@ -182,6 +182,7 @@ ChordsAndTabs/
 │   ├── src/main/resources/
 │   │   └── db/migration/     # Flyway migrations (V1, V2)
 │   ├── compose.yaml           # PostgreSQL + pgAdmin for local dev
+│   ├── .env.example           # Environment variables template
 │   └── pom.xml
 ├── frontend/
 │   ├── src/app/
@@ -190,7 +191,6 @@ ChordsAndTabs/
 │   │   ├── interceptors/     # HTTP interceptors (auth)
 │   │   └── layouts/          # Layout components
 │   └── package.json
-├── .env                       # Environment variables (dev defaults)
 └── AGENTS.md                  # Dev notes for AI assistants
 ```
 
