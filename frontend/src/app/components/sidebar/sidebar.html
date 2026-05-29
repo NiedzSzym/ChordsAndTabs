@@ -1,0 +1,40 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light border-end" style="width: 250px; height: 100vh; position: sticky; top: 0;">
+  <a routerLink="/songs" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+    <span class="fs-4 fw-bold">Chords&Tabs</span>
+  </a>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item mb-1">
+      <a routerLink="/songs" routerLinkActive="active" class="nav-link link-dark">
+        Songs Library
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a class="nav-link link-secondary" style="cursor: not-allowed;" title="Coming soon">
+        Chords
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a class="nav-link link-secondary" style="cursor: not-allowed;" title="Coming soon">
+        Tunings
+      </a>
+    </li>
+    <li class="nav-item mb-1">
+      <a class="nav-link link-secondary" style="cursor: not-allowed;" title="Coming soon">
+        Profile
+      </a>
+    </li>
+  </ul>
+  <hr>
+
+  <div class="mb-3 px-2 text-center">
+    <small class="text-muted d-block" style="font-size: 0.75rem;">Signed in as:</small>
+    <span class="fw-bold text-dark text-truncate d-block" style="max-width: 100%;" title="{{ loggedUser() }}">
+      {{ loggedUser() }}
+    </span>
+  </div>
+
+  <div>
+    <button class="btn btn-outline-danger w-100" (click)="logout()">Sign Out</button>
+  </div>
+</div>

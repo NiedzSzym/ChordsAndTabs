@@ -1,0 +1,89 @@
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">{{ isEditMode() ? 'Edit Chords' : 'Add New Chords' }}</h2>
+        <a [routerLink]="['/songs', songId, 'tabs']" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          @if (errorMessage()) {
+            <div class="alert alert-danger">{{ errorMessage() }}</div>
+          }
+
+          <form (ngSubmit)="onSubmit()" #chordsForm="ngForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="instrumentTypeId" class="form-label">Instrument</label>
+                <select class="form-select" id="instrumentTypeId" name="instrumentTypeId" [(ngModel)]="formData.instrumentTypeId" (ngModelChange)="onInstrumentChange()" required>
+                  @for (instrument of instruments(); track instrument.instrumentTypeId) {
+                    <option [ngValue]="instrument.instrumentTypeId">{{ instrument.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="notationType" class="form-label">Notation Type</label>
+                <select class="form-select" id="notationType" name="notationType" [(ngModel)]="formData.notationType" required>
+                  @for (notation of notations(); track notation) {
+                    <option [value]="notation">{{ notation }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="tuningId" class="form-label">Tuning</label>
+                <select class="form-select" id="tuningId" name="tuningId" [(ngModel)]="formData.tuningId" required [disabled]="tunings().length === 0">
+                  @for (tuning of tunings(); track tuning.tuningId) {
+                    <option [ngValue]="tuning.tuningId">{{ tuning.tuning }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="keyId" class="form-label">Key</label>
+                <select class="form-select" id="keyId" name="keyId" [(ngModel)]="formData.keyId" required>
+                  @for (key of keys(); track key.keyId) {
+                    <option [ngValue]="key.keyId">{{ key.name }} ({{ key.mode }})</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="capoFret" class="form-label">Capo Fret</label>
+                <input type="number" class="form-control" id="capoFret" name="capoFret" [(ngModel)]="formData.capoFret">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="tempo" class="form-label">Tempo (BPM)</label>
+                <input type="number" class="form-control" id="tempo" name="tempo" [(ngModel)]="formData.tempo">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="timeSignature" class="form-label">Time Signature</label>
+                <input type="text" class="form-control" id="timeSignature" name="timeSignature" [(ngModel)]="formData.timeSignature">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="songBody" class="form-label">Chords / Tabs Content</label>
+              <textarea class="form-control font-monospace" id="songBody" name="songBody" [(ngModel)]="formData.songBody" rows="12" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="!chordsForm.form.valid || isLoading()">
+              @if (isLoading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Saving...
+              } @else {
+                {{ isEditMode() ? 'Update Chords' : 'Save' }}
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

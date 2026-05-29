@@ -1,0 +1,76 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">{{ isEditMode() ? 'Edit Song' : 'Add New Song' }}</h2>
+        <a routerLink="/songs" class="btn btn-outline-secondary">Back</a>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          @if (errorMessage()) {
+            <div class="alert alert-danger">{{ errorMessage() }}</div>
+          }
+
+          <form (ngSubmit)="onSubmit()" #songForm="ngForm">
+            <div class="mb-3">
+              <label for="name" class="form-label">Song Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                [(ngModel)]="formData.name"
+                required>
+            </div>
+
+            <div class="mb-3">
+              <label for="year" class="form-label">Release Year</label>
+              <input
+                type="number"
+                class="form-control"
+                id="year"
+                name="year"
+                [(ngModel)]="formData.releaseYear">
+            </div>
+
+            <div class="mb-4">
+              <label for="artistIds" class="form-label d-flex justify-content-between">
+                <span>Artists</span>
+                <a routerLink="/add-artist" class="text-decoration-none small text-success fw-bold">
+                  + Add missing artist
+                </a>
+              </label>
+
+              <select
+                multiple
+                class="form-select"
+                id="artistIds"
+                name="artistIds"
+                [(ngModel)]="formData.artistIds"
+                required>
+                @for (artist of artists(); track artist.artistId) {
+                  <option [ngValue]="artist.artistId">{{ artist.name }}</option>
+                }
+              </select>
+              <div class="form-text text-muted small mt-2">
+                Hold Ctrl (Windows) or Command (Mac) to select multiple artists.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="!songForm.form.valid || isLoading()">
+              @if (isLoading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Saving...
+              } @else {
+                {{ isEditMode() ? 'Update Song' : 'Save' }}
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

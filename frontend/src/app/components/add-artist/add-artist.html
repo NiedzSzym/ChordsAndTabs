@@ -1,0 +1,42 @@
+<div class="container mt-5 mb-5" style="max-width: 500px;">
+
+  <button class="btn btn-outline-secondary mb-4" routerLink="/add-song">
+    &larr; Back to Add Song
+  </button>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white py-3">
+      <h4 class="mb-0">Add New Artist</h4>
+    </div>
+    <div class="card-body p-4">
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger">{{ errorMessage() }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()" #artistForm="ngForm">
+        <div class="mb-4">
+          <label for="name" class="form-label text-muted small fw-bold">Artist Name</label>
+          <input
+            type="text"
+            class="form-control form-control-lg"
+            id="name"
+            name="name"
+            [(ngModel)]="formData.name"
+            placeholder="e.g. The Beatles"
+            required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="!artistForm.form.valid || isLoading()">
+          @if (isLoading()) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Saving...
+          } @else {
+            Save Artist
+          }
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
