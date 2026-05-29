@@ -40,7 +40,15 @@ A full-stack application for sharing and discovering guitar chords, tabs, tuning
 - Node.js 20+ and npm
 - Docker (for PostgreSQL) or a local PostgreSQL 16 instance
 
-### 1. Start the database
+### 1. Configure environment
+
+```bash
+cp .env.example .env    # optional — defaults work out of the box
+```
+
+The `.env` file is only needed if you want to customize database credentials or SMTP settings. All values have sensible defaults defined in `backend/src/main/resources/application.yaml`.
+
+### 2. Start the database
 
 ```bash
 docker compose up -d
@@ -48,7 +56,7 @@ docker compose up -d
 
 Starts PostgreSQL 16 on `localhost:5432` and pgAdmin on `localhost:5050`.
 
-### 2. Start the backend
+### 3. Start the backend
 
 ```bash
 ./backend/mvnw spring-boot:run
@@ -56,7 +64,7 @@ Starts PostgreSQL 16 on `localhost:5432` and pgAdmin on `localhost:5050`.
 
 The `spring-boot-docker-compose` dependency will also auto-start PostgreSQL if it's not already running. The API will be available at `http://localhost:8080`.
 
-### 3. Start the frontend
+### 4. Start the frontend
 
 ```bash
 cd frontend
@@ -66,7 +74,7 @@ npm start      # starts on http://localhost:4200
 
 The Angular dev server proxies API requests to `localhost:8080`.
 
-### 4. Access the application
+### 5. Access the application
 
 - **Frontend**: [http://localhost:4200](http://localhost:4200)
 - **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
