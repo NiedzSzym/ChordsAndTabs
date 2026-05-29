@@ -51,7 +51,7 @@ The `.env` file is only needed if you want to customize database credentials or 
 ### 2. Start the database
 
 ```bash
-docker compose up -d
+cd backend && docker compose up -d
 ```
 
 Starts PostgreSQL 16 on `localhost:5432` and pgAdmin on `localhost:5050`.
@@ -59,10 +59,10 @@ Starts PostgreSQL 16 on `localhost:5432` and pgAdmin on `localhost:5050`.
 ### 3. Start the backend
 
 ```bash
-./backend/mvnw spring-boot:run
+cd backend && ./mvnw spring-boot:run
 ```
 
-The `spring-boot-docker-compose` dependency will also auto-start PostgreSQL if it's not already running. The API will be available at `http://localhost:8080`.
+The `spring-boot-docker-compose` dependency will auto-start PostgreSQL from `backend/compose.yaml`. The API will be available at `http://localhost:8080`.
 
 ### 4. Start the frontend
 
@@ -181,6 +181,7 @@ ChordsAndTabs/
 │   │   └── validation/       # Custom validators (ChordFingering)
 │   ├── src/main/resources/
 │   │   └── db/migration/     # Flyway migrations (V1, V2)
+│   ├── compose.yaml           # PostgreSQL + pgAdmin for local dev
 │   └── pom.xml
 ├── frontend/
 │   ├── src/app/
@@ -189,7 +190,6 @@ ChordsAndTabs/
 │   │   ├── interceptors/     # HTTP interceptors (auth)
 │   │   └── layouts/          # Layout components
 │   └── package.json
-├── compose.yaml               # PostgreSQL + pgAdmin for local dev
 ├── .env                       # Environment variables (dev defaults)
 └── AGENTS.md                  # Dev notes for AI assistants
 ```
@@ -215,10 +215,10 @@ Migrations in `backend/src/main/resources/db/migration/`:
 ./backend/mvnw clean compile
 
 # Start backend with dev database
-./backend/mvnw spring-boot:run
+cd backend && ./mvnw spring-boot:run
 
 # Reset database (deletes all data)
-docker compose down -v && docker compose up -d
+cd backend && docker compose down -v && docker compose up -d
 ```
 
 ```bash
